@@ -6,11 +6,12 @@ import guru.qa.niffler.pages.FriendsPage;
 import guru.qa.niffler.pages.LoginPage;
 import guru.qa.niffler.pages.MainPage;
 import guru.qa.niffler.pages.WelcomePage;
+import guru.qa.niffler.test.BaseWebTest;
 import io.qameta.allure.AllureId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class WithBeforeEachAndTestParametersFriendsWebTest {
+public class WithBeforeEachAndTestParametersFriendsWebTest extends BaseWebTest {
 
     WelcomePage welcomePage = new WelcomePage();
     LoginPage loginPage = new LoginPage();
