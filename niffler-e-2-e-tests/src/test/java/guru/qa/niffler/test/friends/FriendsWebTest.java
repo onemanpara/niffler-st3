@@ -6,10 +6,10 @@ import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.pages.*;
 import guru.qa.niffler.test.BaseWebTest;
 import io.qameta.allure.AllureId;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.jupiter.annotations.User.UserType.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class FriendsWebTest extends BaseWebTest {
 
@@ -116,13 +116,11 @@ public class FriendsWebTest extends BaseWebTest {
                 .checkUserHaveFriendInvitation();
     }
 
-    @Disabled("Not working :(")
     @Test
     @AllureId("999")
     void testWithSameParameters(@User(userType = INVITATION_RECEIVED) UserJson firstUser,
                                 @User(userType = INVITATION_RECEIVED) UserJson secondUser) {
-        System.out.println(firstUser.getUsername());
-        System.out.println(secondUser.getUsername());
+        assertNotEquals(firstUser.getUsername(), secondUser.getUsername());
     }
 
 }
