@@ -3,8 +3,8 @@ package guru.qa.niffler.jupiter.extensions;
 import com.github.javafaker.Faker;
 import guru.qa.niffler.db.dao.AuthUserDAO;
 import guru.qa.niffler.db.dao.UserDataDAO;
-import guru.qa.niffler.db.dao.impl.AuthUserDAOJdbc;
-import guru.qa.niffler.db.dao.impl.UserDataDAOJdbc;
+import guru.qa.niffler.db.dao.impl.AuthUserDAOSpringJdbc;
+import guru.qa.niffler.db.dao.impl.UserDataDAOSpringJdbc;
 import guru.qa.niffler.db.model.auth.AuthUserEntity;
 import guru.qa.niffler.db.model.auth.Authority;
 import guru.qa.niffler.db.model.auth.AuthorityEntity;
@@ -18,8 +18,8 @@ import java.util.*;
 public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCallback, ParameterResolver {
 
 
-    private static final AuthUserDAO authUserDAO = new AuthUserDAOJdbc();
-    private static final UserDataDAO userDataDAO = new UserDataDAOJdbc();
+    private static final AuthUserDAO authUserDAO = new AuthUserDAOSpringJdbc();
+    private static final UserDataDAO userDataDAO = new UserDataDAOSpringJdbc();
 
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(DBUserExtension.class);
 
