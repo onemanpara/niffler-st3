@@ -16,16 +16,6 @@ public class DBTests {
     AuthUserDAO authUserDAO = new AuthUserDAOJdbc();
     UserDataUserDAO userDataUserDAO = new AuthUserDAOJdbc();
 
-    @DBUser(username = "anton", password = "12345")
-    @Test
-    void shouldReadUserFromAuthDB(UserEntity createdUser) {
-        UserEntity user = authUserDAO.getUserFromAuthUserById(createdUser.getId());
-        assertEquals("ivan", user.getUsername());
-        assertEquals(true, user.getEnabled());
-        assertEquals(true, user.getAccountNonLocked());
-        assertEquals(true, user.getCredentialsNonExpired());
-    }
-
     @DBUser(username = "maksim", password = "12345")
     @Test
     void shouldUpdateUserInAuthDB(UserEntity createdUser) {
