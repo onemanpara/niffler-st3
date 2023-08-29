@@ -3,6 +3,7 @@ package guru.qa.niffler.test;
 import guru.qa.niffler.db.dao.AuthUserDAO;
 import guru.qa.niffler.db.dao.AuthUserDAOJdbc;
 import guru.qa.niffler.db.dao.UserDataUserDAO;
+import guru.qa.niffler.db.dao.UserDataUserDAOJdbc;
 import guru.qa.niffler.db.model.CurrencyValues;
 import guru.qa.niffler.db.model.UserDataEntity;
 import guru.qa.niffler.db.model.UserEntity;
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DBTests {
 
     AuthUserDAO authUserDAO = new AuthUserDAOJdbc();
-    UserDataUserDAO userDataUserDAO = new AuthUserDAOJdbc();
+    UserDataUserDAO userDataUserDAO = new UserDataUserDAOJdbc();
 
     @DBUser(username = "maksim", password = "12345")
     @Test

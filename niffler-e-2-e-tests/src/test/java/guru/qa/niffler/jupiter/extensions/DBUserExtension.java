@@ -3,6 +3,7 @@ package guru.qa.niffler.jupiter.extensions;
 import guru.qa.niffler.db.dao.AuthUserDAO;
 import guru.qa.niffler.db.dao.AuthUserDAOJdbc;
 import guru.qa.niffler.db.dao.UserDataUserDAO;
+import guru.qa.niffler.db.dao.UserDataUserDAOJdbc;
 import guru.qa.niffler.db.model.Authority;
 import guru.qa.niffler.db.model.AuthorityEntity;
 import guru.qa.niffler.db.model.UserEntity;
@@ -17,7 +18,7 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
 
 
     private static final AuthUserDAO authUserDAO = new AuthUserDAOJdbc();
-    private static final UserDataUserDAO userDataUserDAO = new AuthUserDAOJdbc();
+    private static final UserDataUserDAO userDataUserDAO = new UserDataUserDAOJdbc();
 
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(DBUserExtension.class);
 
