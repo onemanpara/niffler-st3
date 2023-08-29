@@ -208,7 +208,8 @@ public class AuthUserDAOJdbc implements AuthUserDAO, UserDataUserDAO {
     @Override
     public void updateUserInUserData(UserDataEntity user) {
         try (Connection conn = userdataDs.getConnection()) {
-            PreparedStatement userdataPs = conn.prepareStatement("UPDATE users SET currency=?, firstname=?, surname=?, photo=? WHERE id=?");
+            PreparedStatement userdataPs = conn.prepareStatement("UPDATE users SET currency = ?, firstname = ?, " +
+                    "surname = ?, photo = ? WHERE id = ?");
             userdataPs.setString(1, user.getCurrency().name());
             userdataPs.setString(2, user.getFirstname());
             userdataPs.setString(3, user.getSurname());
@@ -230,9 +231,9 @@ public class AuthUserDAOJdbc implements AuthUserDAO, UserDataUserDAO {
             conn.setAutoCommit(false);
             try (
                     PreparedStatement friendsPs = conn.prepareStatement(
-                            "DELETE FROM friends WHERE user_id=? OR friend_id=?");
+                            "DELETE FROM friends WHERE user_id = ? OR friend_id = ?");
                     PreparedStatement usersPs = conn.prepareStatement(
-                            "DELETE FROM users WHERE id=?")
+                            "DELETE FROM users WHERE id = ?")
             ) {
                 friendsPs.setObject(1, userDataId);
                 friendsPs.setObject(2, userDataId);
