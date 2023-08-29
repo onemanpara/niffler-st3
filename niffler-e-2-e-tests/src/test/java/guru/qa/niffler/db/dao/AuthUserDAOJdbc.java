@@ -113,7 +113,7 @@ public class AuthUserDAOJdbc implements AuthUserDAO {
         try (Connection conn = authDs.getConnection()) {
             PreparedStatement usersPs = conn.prepareStatement("UPDATE users SET password = ?, enabled = ?, account_non_expired = ?, " +
                     "account_non_locked = ?, credentials_non_expired = ? WHERE id = ?");
-            usersPs.setObject(1, user.getPassword());
+            usersPs.setObject(1, pe.encode(user.getPassword()));
             usersPs.setBoolean(2, user.getEnabled());
             usersPs.setBoolean(3, user.getAccountNonExpired());
             usersPs.setBoolean(4, user.getAccountNonLocked());
