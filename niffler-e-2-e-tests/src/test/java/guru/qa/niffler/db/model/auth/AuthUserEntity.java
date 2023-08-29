@@ -1,10 +1,10 @@
-package guru.qa.niffler.db.model;
+package guru.qa.niffler.db.model.auth;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class UserEntity {
+public class AuthUserEntity {
 
     private UUID id;
     private String username;

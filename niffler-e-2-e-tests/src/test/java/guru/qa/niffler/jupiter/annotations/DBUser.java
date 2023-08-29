@@ -12,9 +12,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith({DBUserExtension.class})
 public @interface DBUser {
-
-    String username();
-
-    String password();
-
 }

@@ -1,4 +1,4 @@
-package guru.qa.niffler.db.model;
+package guru.qa.niffler.db.model.auth;
 
 import java.util.UUID;
 
@@ -6,7 +6,7 @@ public class AuthorityEntity {
 
     private UUID id;
     private Authority authority;
-    private UserEntity user;
+    private AuthUserEntity user;
 
     public UUID getId() {
         return id;
@@ -24,11 +24,11 @@ public class AuthorityEntity {
         this.authority = authority;
     }
 
-    public UserEntity getUser() {
+    public AuthUserEntity getUser() {
         return user;
     }
 
-    public void setUser(UserEntity user) {
+    public void setUser(AuthUserEntity user) {
         this.user = user;
     }
 }
