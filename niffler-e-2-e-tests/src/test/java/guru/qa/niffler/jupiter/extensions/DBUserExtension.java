@@ -31,23 +31,25 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
         Map<String, UserEntity> userForTest = new HashMap<>();
         for (Method method : methodsList) {
             DBUser annotation = method.getAnnotation(DBUser.class);
-            UserEntity user = new UserEntity();
-            user.setUsername(annotation.username());
-            user.setPassword(annotation.password());
-            user.setEnabled(true);
-            user.setAccountNonExpired(true);
-            user.setAccountNonLocked(true);
-            user.setCredentialsNonExpired(true);
-            user.setAuthorities(Arrays.stream(Authority.values())
-                    .map(a -> {
-                        AuthorityEntity ae = new AuthorityEntity();
-                        ae.setAuthority(a);
-                        return ae;
-                    }).toList());
-            authUserDAO.createUser(user);
-            userDataUserDAO.createUserInUserData(user);
-            userForTest.put(method.getName(), user);
-            context.getStore(NAMESPACE).put(context.getUniqueId(), userForTest);
+            if (annotation != null) {
+                UserEntity user = new UserEntity();
+                user.setUsername(annotation.username());
+                user.setPassword(annotation.password());
+                user.setEnabled(true);
+                user.setAccountNonExpired(true);
+                user.setAccountNonLocked(true);
+                user.setCredentialsNonExpired(true);
+                user.setAuthorities(Arrays.stream(Authority.values())
+                        .map(a -> {
+                            AuthorityEntity ae = new AuthorityEntity();
+                            ae.setAuthority(a);
+                            return ae;
+                        }).toList());
+                authUserDAO.createUser(user);
+                userDataUserDAO.createUserInUserData(user);
+                userForTest.put(method.getName(), user);
+                context.getStore(NAMESPACE).put(context.getUniqueId(), userForTest);
+            }
         }
     }
 
