@@ -3,6 +3,9 @@ package guru.qa.niffler.pages;
 import guru.qa.niffler.components.Header;
 import io.qameta.allure.Step;
 
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.$;
+
 public class MainPage extends BasePage<MainPage> {
 
     private static final String PAGE_URL = "http://127.0.0.1:3000/main";
@@ -16,6 +19,7 @@ public class MainPage extends BasePage<MainPage> {
     @Step("Wait for main page is loaded")
     public MainPage waitForPageIsLoaded() {
         super.waitForPageIsLoaded();
+        $("section.main-content__section-stats").shouldBe(visible);
         return this;
     }
 
