@@ -1,25 +1,75 @@
-package guru.qa.niffler.test.friends;
+package guru.qa.niffler.tests.friends;
+
 
 import guru.qa.niffler.jupiter.annotations.User;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.models.UserJson;
 import guru.qa.niffler.pages.*;
-import guru.qa.niffler.test.BaseWebTest;
+import guru.qa.niffler.tests.BaseWebTest;
 import io.qameta.allure.AllureId;
 import org.junit.jupiter.api.Test;
 
-import static guru.qa.niffler.jupiter.annotations.User.UserType.INVITATION_RECEIVED;
-import static guru.qa.niffler.jupiter.annotations.User.UserType.INVITATION_SENT;
+import static guru.qa.niffler.jupiter.annotations.User.UserType.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class UsersQueueTest extends BaseWebTest {
+public class FriendsWebTest extends BaseWebTest {
 
     WelcomePage welcomePage = new WelcomePage();
     LoginPage loginPage = new LoginPage();
     MainPage mainPage = new MainPage();
     FriendsPage friendsPage = new FriendsPage();
+    PeoplePage peoplePage = new PeoplePage();
 
     @Test
-    @AllureId("0101")
-    void friendInvitationShouldBeDisplayedInTableAtFriendsPage1(@User(userType = INVITATION_SENT) UserJson userWithInvitationSent,
+    @AllureId("101")
+    void friendShouldBeDisplayedInTableAtFriendsPage(@User(userType = WITH_FRIENDS) UserJson userForTest) {
+        welcomePage
+                .openPage()
+                .waitForPageIsLoaded()
+                .login();
+
+        loginPage
+                .waitForPageIsLoaded()
+                .setUsername(userForTest.getUsername())
+                .setPassword(userForTest.getPassword())
+                .successSubmit();
+
+        mainPage
+                .waitForPageIsLoaded()
+                .getHeader()
+                .goToFriendsPage();
+
+        friendsPage
+                .waitForPageIsLoaded()
+                .checkUserHaveFriend();
+    }
+
+    @Test
+    @AllureId("102")
+    void sentFriendInvitationShouldBeDisplayedInTableAtPeoplePage(@User(userType = INVITATION_SENT) UserJson userForTest) {
+        welcomePage
+                .openPage()
+                .waitForPageIsLoaded()
+                .login();
+
+        loginPage
+                .waitForPageIsLoaded()
+                .setUsername(userForTest.getUsername())
+                .setPassword(userForTest.getPassword())
+                .successSubmit();
+
+        mainPage
+                .waitForPageIsLoaded()
+                .getHeader()
+                .goToPeoplePage();
+
+        peoplePage
+                .waitForPageIsLoaded()
+                .checkInvitationToFriendSent();
+    }
+
+    @Test
+    @AllureId("103")
+    void friendInvitationShouldBeDisplayedInTableAtFriendsPage0(@User(userType = INVITATION_SENT) UserJson userWithInvitationSent,
                                                                 @User(userType = INVITATION_RECEIVED) UserJson userWithInvitationRc) {
         welcomePage
                 .openPage()
@@ -43,9 +93,8 @@ public class UsersQueueTest extends BaseWebTest {
     }
 
     @Test
-    @AllureId("0102")
-    void friendInvitationShouldBeDisplayedInTableAtFriendsPage2(@User(userType = INVITATION_SENT) UserJson userWithInvitationSent,
-                                                                @User(userType = INVITATION_RECEIVED) UserJson userWithInvitationRc) {
+    @AllureId("104")
+    void friendInvitationShouldBeDisplayedInTableAtFriendsPage1(@User(userType = INVITATION_RECEIVED) UserJson userForTest) {
         welcomePage
                 .openPage()
                 .waitForPageIsLoaded()
@@ -53,8 +102,8 @@ public class UsersQueueTest extends BaseWebTest {
 
         loginPage
                 .waitForPageIsLoaded()
-                .setUsername(userWithInvitationRc.getUsername())
-                .setPassword(userWithInvitationRc.getPassword())
+                .setUsername(userForTest.getUsername())
+                .setPassword(userForTest.getPassword())
                 .successSubmit();
 
         mainPage
@@ -64,57 +113,14 @@ public class UsersQueueTest extends BaseWebTest {
 
         friendsPage
                 .waitForPageIsLoaded()
-                .checkUserHaveFriendInvitation(userWithInvitationSent.getUsername());
+                .checkUserHaveFriendInvitation();
     }
 
     @Test
-    @AllureId("0103")
-    void friendInvitationShouldBeDisplayedInTableAtFriendsPage3(@User(userType = INVITATION_SENT) UserJson userWithInvitationSent,
-                                                                @User(userType = INVITATION_RECEIVED) UserJson userWithInvitationRc) {
-        welcomePage
-                .openPage()
-                .waitForPageIsLoaded()
-                .login();
-
-        loginPage
-                .waitForPageIsLoaded()
-                .setUsername(userWithInvitationRc.getUsername())
-                .setPassword(userWithInvitationRc.getPassword())
-                .successSubmit();
-
-        mainPage
-                .waitForPageIsLoaded()
-                .getHeader()
-                .goToFriendsPage();
-
-        friendsPage
-                .waitForPageIsLoaded()
-                .checkUserHaveFriendInvitation(userWithInvitationSent.getUsername());
-    }
-
-    @Test
-    @AllureId("0104")
-    void friendInvitationShouldBeDisplayedInTableAtFriendsPage4(@User(userType = INVITATION_SENT) UserJson userWithInvitationSent,
-                                                                @User(userType = INVITATION_RECEIVED) UserJson userWithInvitationRc) {
-        welcomePage
-                .openPage()
-                .waitForPageIsLoaded()
-                .login();
-
-        loginPage
-                .waitForPageIsLoaded()
-                .setUsername(userWithInvitationRc.getUsername())
-                .setPassword(userWithInvitationRc.getPassword())
-                .successSubmit();
-
-        mainPage
-                .waitForPageIsLoaded()
-                .getHeader()
-                .goToFriendsPage();
-
-        friendsPage
-                .waitForPageIsLoaded()
-                .checkUserHaveFriendInvitation(userWithInvitationSent.getUsername());
+    @AllureId("999")
+    void testWithSameParameters(@User(userType = INVITATION_RECEIVED) UserJson firstUser,
+                                @User(userType = INVITATION_RECEIVED) UserJson secondUser) {
+        assertNotEquals(firstUser.getUsername(), secondUser.getUsername());
     }
 
 }

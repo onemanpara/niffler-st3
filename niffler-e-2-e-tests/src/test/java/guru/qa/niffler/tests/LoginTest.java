@@ -1,4 +1,4 @@
-package guru.qa.niffler.test;
+package guru.qa.niffler.tests;
 
 import guru.qa.niffler.db.model.auth.AuthUserEntity;
 import guru.qa.niffler.jupiter.annotations.DBUser;
@@ -9,7 +9,7 @@ public class LoginTest extends BaseWebTest {
 
     WelcomePage welcomePage = new WelcomePage();
 
-    @DBUser
+    @DBUser(password = "12345")
     @Test
     void mainPageShouldBeVisibleAfterLogin(AuthUserEntity createdUser) {
         welcomePage
@@ -17,7 +17,7 @@ public class LoginTest extends BaseWebTest {
                 .waitForPageIsLoaded()
                 .login()
                 .setUsername(createdUser.getUsername())
-                .setPassword(createdUser.getPassword())
+                .setPassword("12345")
                 .successSubmit()
                 .waitForPageIsLoaded();
     }

@@ -1,9 +1,9 @@
-package guru.qa.niffler.test;
+package guru.qa.niffler.tests;
 
 import guru.qa.niffler.db.dao.AuthUserDAO;
 import guru.qa.niffler.db.dao.UserDataDAO;
-import guru.qa.niffler.db.dao.impl.AuthUserDAOSpringJdbc;
-import guru.qa.niffler.db.dao.impl.UserDataDAOSpringJdbc;
+import guru.qa.niffler.db.dao.impl.hibernate.AuthUserDAOHibernate;
+import guru.qa.niffler.db.dao.impl.hibernate.UserDataDAOHibernate;
 import guru.qa.niffler.db.model.CurrencyValues;
 import guru.qa.niffler.db.model.auth.AuthUserEntity;
 import guru.qa.niffler.db.model.userdata.UserDataEntity;
@@ -14,9 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DBTests {
 
-    UserDataDAO userDataDAOJdbc = new UserDataDAOSpringJdbc();
-
-    AuthUserDAO authUserDAOJdbc = new AuthUserDAOSpringJdbc();
+    UserDataDAO userDataDAO = new UserDataDAOHibernate();
+    AuthUserDAO authUserDAO = new AuthUserDAOHibernate();
 
     @DBUser
     @Test
@@ -25,9 +24,9 @@ public class DBTests {
         createdUser.setAccountNonExpired(false);
         createdUser.setAccountNonLocked(false);
         createdUser.setCredentialsNonExpired(false);
-        authUserDAOJdbc.updateUser(createdUser);
+        authUserDAO.updateUser(createdUser);
 
-        AuthUserEntity user = authUserDAOJdbc.getUserFromAuthUserById(createdUser.getId());
+        AuthUserEntity user = authUserDAO.getUserFromAuthUserById(createdUser.getId());
         assertEquals(false, user.getEnabled());
         assertEquals(false, user.getAccountNonExpired());
         assertEquals(false, user.getAccountNonLocked());
@@ -37,13 +36,13 @@ public class DBTests {
     @DBUser
     @Test
     void shouldUpdateUserInUserDataDB(AuthUserEntity createdUser) {
-        UserDataEntity user = userDataDAOJdbc.getUserFromUserDataByUsername(createdUser.getUsername());
+        UserDataEntity user = userDataDAO.getUserFromUserDataByUsername(createdUser.getUsername());
         user.setFirstname("Ivan");
         user.setSurname("Ivanov");
         user.setCurrency(CurrencyValues.KZT);
-        userDataDAOJdbc.updateUserInUserData(user);
+        userDataDAO.updateUserInUserData(user);
 
-        user = userDataDAOJdbc.getUserFromUserDataByUsername(createdUser.getUsername());
+        user = userDataDAO.getUserFromUserDataByUsername(createdUser.getUsername());
         assertEquals("Ivan", user.getFirstname());
         assertEquals("Ivanov", user.getSurname());
         assertEquals(CurrencyValues.KZT, user.getCurrency());
