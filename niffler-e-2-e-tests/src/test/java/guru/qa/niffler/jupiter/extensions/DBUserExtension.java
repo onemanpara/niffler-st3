@@ -32,7 +32,7 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
                 .filter(method -> method.isAnnotationPresent(BeforeEach.class))
                 .forEach(methodsList::add);
 
-        Map<String, AuthUserEntity> userForTest = new HashMap<>();
+        Map<String, AuthUserEntity> usersForTest = new HashMap<>();
         for (Method method : methodsList) {
             DBUser annotation = method.getAnnotation(DBUser.class);
             if (annotation != null) {
@@ -44,10 +44,10 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
 
                 authUserDAO.createUser(user);
                 userDataDAO.createUserInUserData(userData);
-                userForTest.put(method.getName(), user);
-                context.getStore(NAMESPACE).put(context.getUniqueId(), userForTest);
+                usersForTest.put(method.getName(), user);
             }
         }
+        context.getStore(NAMESPACE).put(context.getUniqueId(), usersForTest);
     }
 
     @Override
