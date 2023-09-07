@@ -1,8 +1,11 @@
-package guru.qa.niffler.db.dao;
+package guru.qa.niffler.db.dao.impl;
 
 import guru.qa.niffler.db.DataSourceProvider;
 import guru.qa.niffler.db.ServiceDB;
-import guru.qa.niffler.db.model.*;
+import guru.qa.niffler.db.dao.AuthUserDAO;
+import guru.qa.niffler.db.model.auth.AuthUserEntity;
+import guru.qa.niffler.db.model.auth.Authority;
+import guru.qa.niffler.db.model.auth.AuthorityEntity;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -17,7 +20,7 @@ public class AuthUserDAOJdbc implements AuthUserDAO {
     private static DataSource authDs = DataSourceProvider.INSTANCE.getDataSource(ServiceDB.AUTH);
 
     @Override
-    public UUID createUser(UserEntity user) {
+    public AuthUserEntity createUser(AuthUserEntity user) {
         UUID generatedUserId = null;
         try (Connection conn = authDs.getConnection()) {
 
@@ -43,6 +46,7 @@ public class AuthUserDAOJdbc implements AuthUserDAO {
                 try (ResultSet generatedKeys = usersPs.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         generatedUserId = UUID.fromString(generatedKeys.getString("id"));
+                        user.setId(generatedUserId);
                     } else {
                         throw new IllegalStateException("Can`t obtain id from given ResultSet");
                     }
@@ -66,12 +70,12 @@ public class AuthUserDAOJdbc implements AuthUserDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return generatedUserId;
+        return user;
     }
 
     @Override
-    public UserEntity getUserFromAuthUserById(UUID userId) {
-        UserEntity user = new UserEntity();
+    public AuthUserEntity getUserFromAuthUserById(UUID userId) {
+        AuthUserEntity user = new AuthUserEntity();
         try (Connection conn = authDs.getConnection()) {
             try (PreparedStatement authPs = conn.prepareStatement("SELECT * FROM users WHERE id = ?");
                  PreparedStatement authorityPs = conn.prepareStatement("SELECT * FROM authorities WHERE user_id = ?")) {
@@ -109,7 +113,7 @@ public class AuthUserDAOJdbc implements AuthUserDAO {
     }
 
     @Override
-    public void updateUser(UserEntity user) {
+    public void updateUser(AuthUserEntity user) {
         try (Connection conn = authDs.getConnection()) {
             PreparedStatement usersPs = conn.prepareStatement("UPDATE users SET password = ?, enabled = ?, account_non_expired = ?, " +
                     "account_non_locked = ?, credentials_non_expired = ? WHERE id = ?");

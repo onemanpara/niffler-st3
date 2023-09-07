@@ -1,12 +1,13 @@
 package guru.qa.niffler.jupiter.extensions;
 
+import com.github.javafaker.Faker;
 import guru.qa.niffler.db.dao.AuthUserDAO;
-import guru.qa.niffler.db.dao.AuthUserDAOJdbc;
-import guru.qa.niffler.db.dao.UserDataUserDAO;
-import guru.qa.niffler.db.dao.UserDataUserDAOJdbc;
-import guru.qa.niffler.db.model.Authority;
-import guru.qa.niffler.db.model.AuthorityEntity;
-import guru.qa.niffler.db.model.UserEntity;
+import guru.qa.niffler.db.dao.UserDataDAO;
+import guru.qa.niffler.db.dao.impl.AuthUserDAOSpringJdbc;
+import guru.qa.niffler.db.dao.impl.UserDataDAOSpringJdbc;
+import guru.qa.niffler.db.model.auth.AuthUserEntity;
+import guru.qa.niffler.db.model.auth.Authority;
+import guru.qa.niffler.db.model.auth.AuthorityEntity;
 import guru.qa.niffler.jupiter.annotations.DBUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.*;
@@ -17,8 +18,8 @@ import java.util.*;
 public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCallback, ParameterResolver {
 
 
-    private static final AuthUserDAO authUserDAO = new AuthUserDAOJdbc();
-    private static final UserDataUserDAO userDataUserDAO = new UserDataUserDAOJdbc();
+    private static final AuthUserDAO authUserDAO = new AuthUserDAOSpringJdbc();
+    private static final UserDataDAO userDataDAO = new UserDataDAOSpringJdbc();
 
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(DBUserExtension.class);
 
@@ -29,13 +30,14 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
         Arrays.stream(context.getRequiredTestClass().getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(BeforeEach.class))
                 .forEach(methodsList::add);
-        Map<String, UserEntity> userForTest = new HashMap<>();
+        Map<String, AuthUserEntity> userForTest = new HashMap<>();
         for (Method method : methodsList) {
             DBUser annotation = method.getAnnotation(DBUser.class);
             if (annotation != null) {
-                UserEntity user = new UserEntity();
-                user.setUsername(annotation.username());
-                user.setPassword(annotation.password());
+                AuthUserEntity user = new AuthUserEntity();
+                Faker faker = new Faker();
+                user.setUsername(annotation.username().isEmpty() ? faker.name().username() : annotation.username());
+                user.setPassword(annotation.password().isEmpty() ? faker.internet().password() : annotation.password());
                 user.setEnabled(true);
                 user.setAccountNonExpired(true);
                 user.setAccountNonLocked(true);
@@ -46,8 +48,9 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
                             ae.setAuthority(a);
                             return ae;
                         }).toList());
+
                 authUserDAO.createUser(user);
-                userDataUserDAO.createUserInUserData(user);
+                userDataDAO.createUserInUserData(user);
                 userForTest.put(method.getName(), user);
                 context.getStore(NAMESPACE).put(context.getUniqueId(), userForTest);
             }
@@ -56,24 +59,24 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
 
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
-        Map<String, UserEntity> usersFromTest = context.getStore(NAMESPACE).get(context.getUniqueId(), Map.class);
+        Map<String, AuthUserEntity> usersFromTest = context.getStore(NAMESPACE).get(context.getUniqueId(), Map.class);
         usersFromTest.values().stream()
-                .map(UserEntity::getId)
+                .map(AuthUserEntity::getId)
                 .forEach(authUserDAO::deleteUserByIdInAuth);
         usersFromTest.values().stream()
-                .map(UserEntity::getUsername)
-                .forEach(userDataUserDAO::deleteUserByUsernameInUserData);
+                .map(AuthUserEntity::getUsername)
+                .forEach(userDataDAO::deleteUserByUsernameInUserData);
     }
 
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return parameterContext.getParameter().getType().isAssignableFrom(UserEntity.class);
+        return parameterContext.getParameter().getType().isAssignableFrom(AuthUserEntity.class);
     }
 
     @Override
-    public UserEntity resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        Map<String, UserEntity> users = extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), Map.class);
+    public AuthUserEntity resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+        Map<String, AuthUserEntity> users = extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), Map.class);
         return users.get(parameterContext.getDeclaringExecutable().getName());
     }
 }
