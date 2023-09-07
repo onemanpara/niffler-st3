@@ -2,10 +2,10 @@ package guru.qa.niffler.jupiter.extensions;
 
 import guru.qa.niffler.db.dao.AuthUserDAO;
 import guru.qa.niffler.db.dao.UserDataDAO;
-import guru.qa.niffler.db.dao.impl.AuthUserDAOHibernate;
-import guru.qa.niffler.db.dao.impl.AuthUserDAOJdbc;
-import guru.qa.niffler.db.dao.impl.AuthUserDAOSpringJdbc;
-import guru.qa.niffler.db.dao.impl.UserDataDAOJdbc;
+import guru.qa.niffler.db.dao.impl.hibernate.AuthUserDAOHibernate;
+import guru.qa.niffler.db.dao.impl.jdbc.AuthUserDAOJdbc;
+import guru.qa.niffler.db.dao.impl.jdbc.UserDataDAOJdbc;
+import guru.qa.niffler.db.dao.impl.springjdbc.AuthUserDAOSpringJdbc;
 import guru.qa.niffler.jupiter.annotations.Dao;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestInstancePostProcessor;

@@ -1,7 +1,7 @@
 package guru.qa.niffler.jupiter.extensions;
 
 import guru.qa.niffler.jupiter.annotations.User;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.models.UserJson;
 import io.qameta.allure.AllureId;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;

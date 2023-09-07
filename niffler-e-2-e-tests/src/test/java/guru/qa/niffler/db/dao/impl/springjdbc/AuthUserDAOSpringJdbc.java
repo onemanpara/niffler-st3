@@ -1,8 +1,8 @@
-package guru.qa.niffler.db.dao.impl;
+package guru.qa.niffler.db.dao.impl.springjdbc;
 
-import guru.qa.niffler.db.DataSourceProvider;
 import guru.qa.niffler.db.ServiceDB;
 import guru.qa.niffler.db.dao.AuthUserDAO;
+import guru.qa.niffler.db.jdbc.DataSourceProvider;
 import guru.qa.niffler.db.model.auth.AuthUserEntity;
 import guru.qa.niffler.db.model.auth.Authority;
 import guru.qa.niffler.db.model.auth.AuthorityEntity;

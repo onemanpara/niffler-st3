@@ -1,12 +1,11 @@
-package guru.qa.niffler.db.dao.impl;
+package guru.qa.niffler.db.dao.impl.springjdbc;
 
-import guru.qa.niffler.db.DataSourceProvider;
 import guru.qa.niffler.db.ServiceDB;
-import guru.qa.niffler.db.springjdbc.UserDataEntityRowMapper;
 import guru.qa.niffler.db.dao.UserDataDAO;
-import guru.qa.niffler.db.model.auth.AuthUserEntity;
+import guru.qa.niffler.db.jdbc.DataSourceProvider;
 import guru.qa.niffler.db.model.CurrencyValues;
 import guru.qa.niffler.db.model.userdata.UserDataEntity;
+import guru.qa.niffler.db.springjdbc.UserDataEntityRowMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -31,14 +30,14 @@ public class UserDataDAOSpringJdbc implements UserDataDAO {
     }
 
     @Override
-    public UserDataEntity createUserInUserData(AuthUserEntity user) {
+    public UserDataEntity createUserInUserData(UserDataEntity user) {
         KeyHolder kh = new GeneratedKeyHolder();
         userdataJdbcTemplate.update(connection -> {
             PreparedStatement usersPs = connection.prepareStatement(
                     "INSERT INTO users (username, currency) " +
                             "VALUES (?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
             usersPs.setString(1, user.getUsername());
-            usersPs.setString(2, CurrencyValues.RUB.name());
+            usersPs.setString(2, user.getCurrency().name());
             return usersPs;
         }, kh);
         final UUID userId = (UUID) kh.getKeyList().get(0).get("id");

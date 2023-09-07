@@ -1,25 +1,15 @@
 package guru.qa.niffler.jupiter.extensions;
 
-import guru.qa.niffler.api.CategoryService;
+import guru.qa.niffler.api.category.CategoryServiceClient;
 import guru.qa.niffler.jupiter.annotations.Category;
-import guru.qa.niffler.model.CategoryJson;
-import okhttp3.OkHttpClient;
+import guru.qa.niffler.models.CategoryJson;
 import org.junit.jupiter.api.extension.*;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 public class CategoryExtension implements BeforeEachCallback, ParameterResolver {
 
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
 
-    private static final OkHttpClient httpClient = new OkHttpClient.Builder().build();
-    private static final Retrofit retrofit = new Retrofit.Builder()
-            .client(httpClient)
-            .baseUrl("http://127.0.0.1:8093")
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
-
-    private final CategoryService categoryService = retrofit.create(CategoryService.class);
+    private final CategoryServiceClient categoryServiceClient = new CategoryServiceClient();
 
 
     @Override
@@ -29,7 +19,8 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver 
             CategoryJson category = new CategoryJson();
             category.setUsername(annotation.username());
             category.setCategory(annotation.category());
-            categoryService.addCategory(category).execute();
+            categoryServiceClient.addCategory(category);
+            context.getStore(NAMESPACE).put(context.getUniqueId(), category);
         }
     }
 
@@ -44,7 +35,7 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver 
     public CategoryJson resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         return extensionContext
                 .getStore(CategoryExtension.NAMESPACE)
-                .get("category", CategoryJson.class);
+                .get(extensionContext.getUniqueId(), CategoryJson.class);
     }
 
 }

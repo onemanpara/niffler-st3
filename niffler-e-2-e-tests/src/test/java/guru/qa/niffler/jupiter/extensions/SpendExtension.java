@@ -1,12 +1,9 @@
 package guru.qa.niffler.jupiter.extensions;
 
-import guru.qa.niffler.api.SpendService;
+import guru.qa.niffler.api.spend.SpendServiceClient;
 import guru.qa.niffler.jupiter.annotations.Spend;
-import guru.qa.niffler.model.SpendJson;
-import okhttp3.OkHttpClient;
+import guru.qa.niffler.models.SpendJson;
 import org.junit.jupiter.api.extension.*;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.util.Date;
 
@@ -14,14 +11,8 @@ public class SpendExtension implements BeforeEachCallback, ParameterResolver {
 
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(SpendExtension.class);
 
-    private static final OkHttpClient httpClient = new OkHttpClient.Builder().build();
-    private static final Retrofit retrofit = new Retrofit.Builder()
-            .client(httpClient)
-            .baseUrl("http://127.0.0.1:8093")
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
+    private final SpendServiceClient spendServiceClient = new SpendServiceClient();
 
-    private SpendService spendService = retrofit.create(SpendService.class);
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
@@ -34,8 +25,8 @@ public class SpendExtension implements BeforeEachCallback, ParameterResolver {
             spend.setCategory(annotation.category());
             spend.setSpendDate(new Date());
             spend.setCurrency(annotation.currency());
-            SpendJson createdSpend = spendService.addSpend(spend).execute().body();
-            context.getStore(NAMESPACE).put("spend", createdSpend);
+            SpendJson createdSpend = spendServiceClient.addSpend(spend);
+            context.getStore(NAMESPACE).put(context.getUniqueId(), createdSpend);
         }
     }
 
@@ -50,7 +41,7 @@ public class SpendExtension implements BeforeEachCallback, ParameterResolver {
     public SpendJson resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         return extensionContext
                 .getStore(SpendExtension.NAMESPACE)
-                .get("spend", SpendJson.class);
+                .get(extensionContext.getUniqueId(), SpendJson.class);
     }
 
 }

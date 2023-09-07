@@ -80,11 +80,14 @@ sourceSets {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
     // REST
     testImplementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    testImplementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
-    testImplementation 'com.squareup.okhttp3:logging-interceptor:3.14.9'
+    testImplementation('com.squareup.retrofit2:converter-jackson:2.9.0') {
+        exclude group: "com.squareup.retrofit2", module: "retrofit"
+    }
+    testImplementation('com.squareup.okhttp3:logging-interceptor:3.14.9') {
+    }
     // DB
     testImplementation 'org.springframework:spring-jdbc:6.0.4'
     testImplementation 'org.postgresql:postgresql:42.5.3'
@@ -102,13 +105,19 @@ dependencies {
     testImplementation("io.qameta.allure:allure-selenide:${allureVersion}") {
         exclude group: 'com.codeborne'
     }
-    testImplementation "io.qameta.allure:allure-okhttp3:${allureVersion}"
-    testImplementation "io.qameta.allure:allure-selenide:${allureVersion}"
-    testImplementation "io.qameta.allure:allure-grpc:${allureVersion}"
+    testImplementation("io.qameta.allure:allure-okhttp3:${allureVersion}") {
+        exclude group: "io.qameta.allure", module: "allure-attachments"
+        exclude group: "com.squareup.okhttp3"
+    }
+    testImplementation("io.qameta.allure:allure-grpc:${allureVersion}") {
+        exclude group: "io.qameta.allure", module: "allure-attachments"
+    }
     // WEB
     testImplementation "com.codeborne:selenide:${selenideVersion}"
     // Utils
-    testImplementation 'com.github.javafaker:javafaker:1.0.2'
+    testImplementation('com.github.javafaker:javafaker:1.0.2') {
+        exclude group: "org.apache.commons", module: "commons-lang3"
+    }
     testImplementation 'commons-io:commons-io:2.11.0'
     testImplementation 'com.google.code.findbugs:jsr305:3.0.2'
     // gRPC
@@ -124,9 +133,15 @@ dependencies {
     implementation(files(genJaxb.classesDir).builtBy(genJaxb))
     jaxb 'org.glassfish.jaxb:jaxb-xjc:4.0.1'
     // Kafka
-    testImplementation 'org.apache.kafka:kafka-clients:3.5.0'
+    testImplementation('org.apache.kafka:kafka-clients:3.5.0') {
+        exclude group: "org.slf4j"
+    }
     // Wiremock
-    testImplementation 'com.github.tomakehurst:wiremock-jre8:2.35.0'
+    testImplementation('com.github.tomakehurst:wiremock-jre8:2.35.0') {
+        exclude group: "com.fasterxml.jackson"
+        exclude group: "com.fasterxml.jackson.core"
+        exclude group: "org.slf4j"
+    }
     testImplementation 'com.github.tomakehurst:wiremock-standalone:2.27.2'
 }
 
