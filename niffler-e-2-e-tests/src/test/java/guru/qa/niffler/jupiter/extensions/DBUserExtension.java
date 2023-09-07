@@ -19,13 +19,12 @@ import java.util.*;
 
 public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCallback, ParameterResolver {
 
-    private static final AuthUserDAO authUserDAO = new AuthUserDAOHibernate();
-    private static final UserDataDAO userDataDAO = new UserDataDAOHibernate();
-
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(DBUserExtension.class);
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
+        AuthUserDAO authUserDAO = new AuthUserDAOHibernate();
+        UserDataDAO userDataDAO = new UserDataDAOHibernate();
         List<Method> methodsList = new ArrayList<>();
         methodsList.add(context.getRequiredTestMethod());
         Arrays.stream(context.getRequiredTestClass().getDeclaredMethods())
@@ -52,6 +51,8 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
 
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
+        AuthUserDAO authUserDAO = new AuthUserDAOHibernate();
+        UserDataDAO userDataDAO = new UserDataDAOHibernate();
         Map<String, AuthUserEntity> usersFromTest = context.getStore(NAMESPACE).get(context.getUniqueId(), Map.class);
         usersFromTest.values().stream()
                 .map(AuthUserEntity::getId)
