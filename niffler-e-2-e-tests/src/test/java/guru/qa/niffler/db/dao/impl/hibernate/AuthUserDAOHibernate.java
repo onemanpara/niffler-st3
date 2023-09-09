@@ -38,4 +38,5 @@ public class AuthUserDAOHibernate extends JpaService implements AuthUserDAO {
         AuthUserEntity user = getUserFromAuthUserById(userId);
         remove(user);
     }
+
 }
