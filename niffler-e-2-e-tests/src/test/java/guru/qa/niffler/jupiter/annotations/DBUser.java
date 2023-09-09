@@ -16,4 +16,5 @@ public @interface DBUser {
     String username() default "";
 
     String password() default "";
+
 }

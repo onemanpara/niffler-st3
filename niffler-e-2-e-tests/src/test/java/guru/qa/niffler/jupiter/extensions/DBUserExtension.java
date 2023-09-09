@@ -25,6 +25,7 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
     public void beforeEach(ExtensionContext context) throws Exception {
         AuthUserDAO authUserDAO = new AuthUserDAOHibernate();
         UserDataDAO userDataDAO = new UserDataDAOHibernate();
+
         List<Method> methodsList = new ArrayList<>();
         methodsList.add(context.getRequiredTestMethod());
         Arrays.stream(context.getRequiredTestClass().getDeclaredMethods())
@@ -78,7 +79,7 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
         Faker faker = new Faker();
         AuthUserEntity user = new AuthUserEntity();
         user.setUsername(annotation.username().isEmpty() ? faker.name().username() : annotation.username());
-        user.setPassword(annotation.password().isEmpty() ? faker.internet().password() : annotation.password());
+        user.setPassword(annotation.password().isEmpty() ? faker.internet().password(3, 12) : annotation.password());
         user.setEnabled(true);
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
@@ -92,4 +93,5 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
                 }).toList()));
         return user;
     }
+
 }

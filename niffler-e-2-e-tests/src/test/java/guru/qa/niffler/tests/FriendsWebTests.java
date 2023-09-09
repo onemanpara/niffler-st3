@@ -1,26 +1,20 @@
-package guru.qa.niffler.tests.friends;
+package guru.qa.niffler.tests;
 
 
+import guru.qa.niffler.db.model.auth.AuthUserEntity;
+import guru.qa.niffler.jupiter.annotations.DBUser;
 import guru.qa.niffler.jupiter.annotations.User;
 import guru.qa.niffler.models.UserJson;
-import guru.qa.niffler.pages.*;
-import guru.qa.niffler.tests.BaseWebTest;
-import io.qameta.allure.AllureId;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.jupiter.annotations.User.UserType.*;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class FriendsWebTest extends BaseWebTest {
-
-    WelcomePage welcomePage = new WelcomePage();
-    LoginPage loginPage = new LoginPage();
-    MainPage mainPage = new MainPage();
-    FriendsPage friendsPage = new FriendsPage();
-    PeoplePage peoplePage = new PeoplePage();
+public class FriendsWebTests extends BaseWebTest {
 
     @Test
-    @AllureId("101")
+    @DisplayName("WEB: Друзья пользователя отображаются в таблице на странице друзей")
     void friendShouldBeDisplayedInTableAtFriendsPage(@User(userType = WITH_FRIENDS) UserJson userForTest) {
         welcomePage
                 .openPage()
@@ -44,7 +38,7 @@ public class FriendsWebTest extends BaseWebTest {
     }
 
     @Test
-    @AllureId("102")
+    @DisplayName("WEB: Отправленное приглашение в друзья отображается в таблице на странице со всеми пользователями")
     void sentFriendInvitationShouldBeDisplayedInTableAtPeoplePage(@User(userType = INVITATION_SENT) UserJson userForTest) {
         welcomePage
                 .openPage()
@@ -68,9 +62,9 @@ public class FriendsWebTest extends BaseWebTest {
     }
 
     @Test
-    @AllureId("103")
-    void friendInvitationShouldBeDisplayedInTableAtFriendsPage0(@User(userType = INVITATION_SENT) UserJson userWithInvitationSent,
-                                                                @User(userType = INVITATION_RECEIVED) UserJson userWithInvitationRc) {
+    @DisplayName("WEB: Полученное приглашение в друзья отображается в таблице на странице друзей")
+    void friendInvitationShouldBeDisplayedInTableAtFriendsPage(@User(userType = INVITATION_SENT) UserJson userWithInvitationSent,
+                                                               @User(userType = INVITATION_RECEIVED) UserJson userWithInvitationRc) {
         welcomePage
                 .openPage()
                 .waitForPageIsLoaded()
@@ -92,35 +86,29 @@ public class FriendsWebTest extends BaseWebTest {
                 .checkUserHaveFriendInvitation(userWithInvitationSent.getUsername());
     }
 
+    @Disabled("Не удаляется пользователь после прохождения теста из niffler-userdata (т.к. не удаляется запись из таблицы friends)")
     @Test
-    @AllureId("104")
-    void friendInvitationShouldBeDisplayedInTableAtFriendsPage1(@User(userType = INVITATION_RECEIVED) UserJson userForTest) {
+    @DisplayName("WEB: Пользователь может отправить приглашение в друзья")
+    @DBUser
+    void shouldSendFriendInvitation(AuthUserEntity createdUser) {
         welcomePage
                 .openPage()
                 .waitForPageIsLoaded()
-                .login();
-
-        loginPage
+                .login()
                 .waitForPageIsLoaded()
-                .setUsername(userForTest.getUsername())
-                .setPassword(userForTest.getPassword())
-                .successSubmit();
+                .setUsername(createdUser.getUsername())
+                .setPassword(createdUser.getEncodedPassword())
+                .successSubmit()
+                .waitForPageIsLoaded();
 
-        mainPage
+        peoplePage
+                .openPage()
                 .waitForPageIsLoaded()
-                .getHeader()
-                .goToFriendsPage();
-
-        friendsPage
+                .sendFriendInvitation();
+        peoplePage
+                .openPage()
                 .waitForPageIsLoaded()
-                .checkUserHaveFriendInvitation();
-    }
-
-    @Test
-    @AllureId("999")
-    void testWithSameParameters(@User(userType = INVITATION_RECEIVED) UserJson firstUser,
-                                @User(userType = INVITATION_RECEIVED) UserJson secondUser) {
-        assertNotEquals(firstUser.getUsername(), secondUser.getUsername());
+                .checkInvitationToFriendSent();
     }
 
 }

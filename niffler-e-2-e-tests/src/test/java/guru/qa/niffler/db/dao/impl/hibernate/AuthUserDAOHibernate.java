@@ -5,6 +5,7 @@ import guru.qa.niffler.db.dao.AuthUserDAO;
 import guru.qa.niffler.db.jpa.EntityManagerFactoryProvider;
 import guru.qa.niffler.db.jpa.JpaService;
 import guru.qa.niffler.db.model.auth.AuthUserEntity;
+import org.apache.kafka.common.protocol.types.Field;
 
 import java.util.UUID;
 
@@ -16,7 +17,9 @@ public class AuthUserDAOHibernate extends JpaService implements AuthUserDAO {
 
     @Override
     public AuthUserEntity createUser(AuthUserEntity user) {
-        user.setPassword(pe.encode(user.getPassword()));
+        final String password = user.getPassword();
+        user.setEncodedPassword(password);
+        user.setPassword(pe.encode(password));
         persist(user);
         return user;
     }

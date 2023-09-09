@@ -35,4 +35,5 @@ public class UserDataDAOHibernate extends JpaService implements UserDataDAO {
         UserDataEntity user = getUserFromUserDataByUsername(username);
         remove(user);
     }
+
 }

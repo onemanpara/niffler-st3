@@ -13,6 +13,11 @@ public class DockerConfig implements Config {
     }
 
     @Override
+    public String nifflerFrontendUrl() {
+        return "niffler-frontend:3000";
+    }
+
+    @Override
     public String nifflerSpendUrl() {
         return "niffler-spend:8093";
     }
