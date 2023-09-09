@@ -5,7 +5,6 @@ import guru.qa.niffler.db.dao.AuthUserDAO;
 import guru.qa.niffler.db.jpa.EntityManagerFactoryProvider;
 import guru.qa.niffler.db.jpa.JpaService;
 import guru.qa.niffler.db.model.auth.AuthUserEntity;
-import org.apache.kafka.common.protocol.types.Field;
 
 import java.util.UUID;
 
