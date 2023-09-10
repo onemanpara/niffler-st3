@@ -48,7 +48,6 @@ public class ProfileTests extends BaseWebTest {
 
     @Test
     @DisplayName("WEB: Пользователь может загрузить аватар")
-    @DBUser
     void shouldUploadAvatar() {
         String filePath = "files/testimg.jpg";
         profilePage
