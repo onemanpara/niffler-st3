@@ -30,7 +30,7 @@ public class UserDataDAOSpringJdbc implements UserDataDAO {
     }
 
     @Override
-    public UserDataEntity createUserInUserData(UserDataEntity user) {
+    public void createUserInUserData(UserDataEntity user) {
         KeyHolder kh = new GeneratedKeyHolder();
         userdataJdbcTemplate.update(connection -> {
             PreparedStatement usersPs = connection.prepareStatement(
@@ -45,7 +45,6 @@ public class UserDataDAOSpringJdbc implements UserDataDAO {
         userData.setId(userId);
         userData.setUsername(user.getUsername());
         userData.setCurrency(CurrencyValues.RUB);
-        return userData;
     }
 
     @Override
@@ -79,11 +78,10 @@ public class UserDataDAOSpringJdbc implements UserDataDAO {
     }
 
     @Override
-    public void deleteUserByUsernameInUserData(String username) {
-        UUID userId = getUserFromUserDataByUsername(username).getId();
+    public void deleteUserInUserData(UserDataEntity user) {
         userdataTtpl.executeWithoutResult(status -> {
-            userdataJdbcTemplate.update("DELETE FROM friends WHERE user_id = ? OR friend_id = ?", userId, userId);
-            userdataJdbcTemplate.update("DELETE FROM users WHERE id = ?", userId);
+            userdataJdbcTemplate.update("DELETE FROM friends WHERE user_id = ? OR friend_id = ?", user.getId(), user.getId());
+            userdataJdbcTemplate.update("DELETE FROM users WHERE id = ?", user.getId());
         });
     }
 }

@@ -1,11 +1,8 @@
 package guru.qa.niffler.tests;
 
 
-import guru.qa.niffler.db.model.auth.AuthUserEntity;
-import guru.qa.niffler.jupiter.annotations.DBUser;
 import guru.qa.niffler.jupiter.annotations.User;
 import guru.qa.niffler.models.UserJson;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -84,31 +81,6 @@ public class FriendsWebTests extends BaseWebTest {
         friendsPage
                 .waitForPageIsLoaded()
                 .checkUserHaveFriendInvitation(userWithInvitationSent.getUsername());
-    }
-
-    @Disabled("Не удаляется пользователь после прохождения теста из niffler-userdata (т.к. не удаляется запись из таблицы friends)")
-    @Test
-    @DisplayName("WEB: Пользователь может отправить приглашение в друзья")
-    @DBUser
-    void shouldSendFriendInvitation(AuthUserEntity createdUser) {
-        welcomePage
-                .openPage()
-                .waitForPageIsLoaded()
-                .login()
-                .waitForPageIsLoaded()
-                .setUsername(createdUser.getUsername())
-                .setPassword(createdUser.getEncodedPassword())
-                .successSubmit()
-                .waitForPageIsLoaded();
-
-        peoplePage
-                .openPage()
-                .waitForPageIsLoaded()
-                .sendFriendInvitation();
-        peoplePage
-                .openPage()
-                .waitForPageIsLoaded()
-                .checkInvitationToFriendSent();
     }
 
 }

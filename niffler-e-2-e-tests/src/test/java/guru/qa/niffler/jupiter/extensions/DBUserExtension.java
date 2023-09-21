@@ -1,15 +1,10 @@
 package guru.qa.niffler.jupiter.extensions;
 
 import com.github.javafaker.Faker;
-import guru.qa.niffler.db.dao.AuthUserDAO;
-import guru.qa.niffler.db.dao.UserDataDAO;
-import guru.qa.niffler.db.dao.impl.hibernate.AuthUserDAOHibernate;
-import guru.qa.niffler.db.dao.impl.hibernate.UserDataDAOHibernate;
-import guru.qa.niffler.db.model.CurrencyValues;
 import guru.qa.niffler.db.model.auth.AuthUserEntity;
 import guru.qa.niffler.db.model.auth.Authority;
 import guru.qa.niffler.db.model.auth.AuthorityEntity;
-import guru.qa.niffler.db.model.userdata.UserDataEntity;
+import guru.qa.niffler.db.repository.UserRepositoryHibernate;
 import guru.qa.niffler.jupiter.annotations.DBUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.*;
@@ -23,8 +18,7 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        AuthUserDAO authUserDAO = new AuthUserDAOHibernate();
-        UserDataDAO userDataDAO = new UserDataDAOHibernate();
+        UserRepositoryHibernate userRepository = new UserRepositoryHibernate();
 
         List<Method> methodsList = new ArrayList<>();
         methodsList.add(context.getRequiredTestMethod());
@@ -37,13 +31,7 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
             DBUser annotation = method.getAnnotation(DBUser.class);
             if (annotation != null) {
                 AuthUserEntity user = createAuthUserEntity(annotation);
-                UserDataEntity userData = new UserDataEntity();
-
-                userData.setUsername(user.getUsername());
-                userData.setCurrency(CurrencyValues.RUB);
-
-                authUserDAO.createUser(user);
-                userDataDAO.createUserInUserData(userData);
+                userRepository.createUserForTest(user);
                 usersForTest.put(method.getName(), user);
             }
         }
@@ -52,15 +40,9 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
 
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
-        AuthUserDAO authUserDAO = new AuthUserDAOHibernate();
-        UserDataDAO userDataDAO = new UserDataDAOHibernate();
+        UserRepositoryHibernate userRepositoryHibernate = new UserRepositoryHibernate();
         Map<String, AuthUserEntity> usersFromTest = context.getStore(NAMESPACE).get(context.getUniqueId(), Map.class);
-        usersFromTest.values().stream()
-                .map(AuthUserEntity::getId)
-                .forEach(authUserDAO::deleteUserByIdInAuth);
-        usersFromTest.values().stream()
-                .map(AuthUserEntity::getUsername)
-                .forEach(userDataDAO::deleteUserByUsernameInUserData);
+        usersFromTest.values().forEach(userRepositoryHibernate::removeUser);
     }
 
 
@@ -78,8 +60,10 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
     private AuthUserEntity createAuthUserEntity(DBUser annotation) {
         Faker faker = new Faker();
         AuthUserEntity user = new AuthUserEntity();
+        final String password = annotation.password().isEmpty() ? faker.internet().password(3, 12) : annotation.password();
         user.setUsername(annotation.username().isEmpty() ? faker.name().username() : annotation.username());
-        user.setPassword(annotation.password().isEmpty() ? faker.internet().password(3, 12) : annotation.password());
+        user.setPassword(password);
+        user.setEncodedPassword(password);
         user.setEnabled(true);
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
