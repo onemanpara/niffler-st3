@@ -3,6 +3,7 @@ package guru.qa.niffler.pages;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
@@ -13,6 +14,7 @@ public class LoginPage extends BasePage<LoginPage> {
     private final SelenideElement usernameInput = $("input[name='username']");
     private final SelenideElement passwordInput = $("input[name='password']");
     private final SelenideElement submitButton = $("button.form__submit");
+    private final SelenideElement error = $(".form__error");
 
     @Override
     protected String getPageUrl() {
@@ -44,6 +46,18 @@ public class LoginPage extends BasePage<LoginPage> {
     public MainPage successSubmit() {
         submitButton.click();
         return new MainPage();
+    }
+
+    @Step("Error submit login form")
+    public LoginPage errorSubmit() {
+        submitButton.click();
+        return this;
+    }
+
+    @Step("Check error message is: {error}")
+    public LoginPage checkErrorMessage(String error) {
+        this.error.shouldBe(visible).shouldHave(text(error));
+        return this;
     }
 
 }

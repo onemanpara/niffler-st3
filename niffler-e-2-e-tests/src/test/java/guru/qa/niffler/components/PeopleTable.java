@@ -19,4 +19,8 @@ public class PeopleTable extends BaseComponent<PeopleTable> {
         return $$("table tr:has([data-tooltip-id='submit-invitation'])");
     }
 
+    public SelenideElement getActionsCell(SelenideElement row) {
+        return row.$$("td").get(3);
+    }
+
 }

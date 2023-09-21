@@ -38,6 +38,8 @@ public class AuthUserEntity {
     @OneToMany(fetch = EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
     private List<AuthorityEntity> authorities = new ArrayList<>();
 
+    transient private String encodedPassword;
+
     public UUID getId() {
         return id;
     }
@@ -117,5 +119,13 @@ public class AuthUserEntity {
     @Override
     public int hashCode() {
         return Objects.hash(id, username, password, enabled, accountNonExpired, accountNonLocked, credentialsNonExpired, authorities);
+    }
+
+    public void setEncodedPassword(String encodedPassword) {
+        this.encodedPassword = encodedPassword;
+    }
+
+    public String getEncodedPassword() {
+        return encodedPassword;
     }
 }

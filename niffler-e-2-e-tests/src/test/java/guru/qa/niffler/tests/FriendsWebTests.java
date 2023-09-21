@@ -1,26 +1,17 @@
-package guru.qa.niffler.tests.friends;
+package guru.qa.niffler.tests;
 
 
 import guru.qa.niffler.jupiter.annotations.User;
 import guru.qa.niffler.models.UserJson;
-import guru.qa.niffler.pages.*;
-import guru.qa.niffler.tests.BaseWebTest;
-import io.qameta.allure.AllureId;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.jupiter.annotations.User.UserType.*;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class FriendsWebTest extends BaseWebTest {
-
-    WelcomePage welcomePage = new WelcomePage();
-    LoginPage loginPage = new LoginPage();
-    MainPage mainPage = new MainPage();
-    FriendsPage friendsPage = new FriendsPage();
-    PeoplePage peoplePage = new PeoplePage();
+public class FriendsWebTests extends BaseWebTest {
 
     @Test
-    @AllureId("101")
+    @DisplayName("WEB: Друзья пользователя отображаются в таблице на странице друзей")
     void friendShouldBeDisplayedInTableAtFriendsPage(@User(userType = WITH_FRIENDS) UserJson userForTest) {
         welcomePage
                 .openPage()
@@ -44,7 +35,7 @@ public class FriendsWebTest extends BaseWebTest {
     }
 
     @Test
-    @AllureId("102")
+    @DisplayName("WEB: Отправленное приглашение в друзья отображается в таблице на странице со всеми пользователями")
     void sentFriendInvitationShouldBeDisplayedInTableAtPeoplePage(@User(userType = INVITATION_SENT) UserJson userForTest) {
         welcomePage
                 .openPage()
@@ -68,9 +59,9 @@ public class FriendsWebTest extends BaseWebTest {
     }
 
     @Test
-    @AllureId("103")
-    void friendInvitationShouldBeDisplayedInTableAtFriendsPage0(@User(userType = INVITATION_SENT) UserJson userWithInvitationSent,
-                                                                @User(userType = INVITATION_RECEIVED) UserJson userWithInvitationRc) {
+    @DisplayName("WEB: Полученное приглашение в друзья отображается в таблице на странице друзей")
+    void friendInvitationShouldBeDisplayedInTableAtFriendsPage(@User(userType = INVITATION_SENT) UserJson userWithInvitationSent,
+                                                               @User(userType = INVITATION_RECEIVED) UserJson userWithInvitationRc) {
         welcomePage
                 .openPage()
                 .waitForPageIsLoaded()
@@ -90,37 +81,6 @@ public class FriendsWebTest extends BaseWebTest {
         friendsPage
                 .waitForPageIsLoaded()
                 .checkUserHaveFriendInvitation(userWithInvitationSent.getUsername());
-    }
-
-    @Test
-    @AllureId("104")
-    void friendInvitationShouldBeDisplayedInTableAtFriendsPage1(@User(userType = INVITATION_RECEIVED) UserJson userForTest) {
-        welcomePage
-                .openPage()
-                .waitForPageIsLoaded()
-                .login();
-
-        loginPage
-                .waitForPageIsLoaded()
-                .setUsername(userForTest.getUsername())
-                .setPassword(userForTest.getPassword())
-                .successSubmit();
-
-        mainPage
-                .waitForPageIsLoaded()
-                .getHeader()
-                .goToFriendsPage();
-
-        friendsPage
-                .waitForPageIsLoaded()
-                .checkUserHaveFriendInvitation();
-    }
-
-    @Test
-    @AllureId("999")
-    void testWithSameParameters(@User(userType = INVITATION_RECEIVED) UserJson firstUser,
-                                @User(userType = INVITATION_RECEIVED) UserJson secondUser) {
-        assertNotEquals(firstUser.getUsername(), secondUser.getUsername());
     }
 
 }

@@ -1,23 +1,23 @@
-package guru.qa.niffler.tests;
+package guru.qa.niffler.tests.login;
 
 import guru.qa.niffler.db.model.auth.AuthUserEntity;
 import guru.qa.niffler.jupiter.annotations.DBUser;
-import guru.qa.niffler.pages.WelcomePage;
+import guru.qa.niffler.tests.BaseWebTest;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class LoginTest extends BaseWebTest {
 
-    WelcomePage welcomePage = new WelcomePage();
-
-    @DBUser(password = "12345")
     @Test
+    @DisplayName("WEB: Личный кабинет должен отображаться после логина новым юзером")
+    @DBUser
     void mainPageShouldBeVisibleAfterLogin(AuthUserEntity createdUser) {
         welcomePage
                 .openPage()
                 .waitForPageIsLoaded()
                 .login()
                 .setUsername(createdUser.getUsername())
-                .setPassword("12345")
+                .setPassword(createdUser.getEncodedPassword())
                 .successSubmit()
                 .waitForPageIsLoaded();
     }

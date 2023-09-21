@@ -18,7 +18,7 @@ public class UserDataDAOJdbc implements UserDataDAO {
     private static DataSource userdataDs = DataSourceProvider.INSTANCE.getDataSource(ServiceDB.USERDATA);
 
     @Override
-    public UserDataEntity createUserInUserData(UserDataEntity user) {
+    public void createUserInUserData(UserDataEntity user) {
         try (Connection conn = userdataDs.getConnection()) {
             PreparedStatement usersPs = conn.prepareStatement(
                     "INSERT INTO users (username, currency) " +
@@ -26,18 +26,6 @@ public class UserDataDAOJdbc implements UserDataDAO {
             usersPs.setString(1, user.getUsername());
             usersPs.setString(2, user.getCurrency().name());
             usersPs.executeUpdate();
-
-            try (ResultSet generatedKeys = usersPs.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    UserDataEntity userData = new UserDataEntity();
-                    userData.setId(UUID.fromString(generatedKeys.getString("id")));
-                    userData.setUsername(user.getUsername());
-                    userData.setCurrency(CurrencyValues.RUB);
-                    return userData;
-                } else {
-                    throw new IllegalStateException("Can`t obtain id from given ResultSet");
-                }
-            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -87,8 +75,7 @@ public class UserDataDAOJdbc implements UserDataDAO {
     }
 
     @Override
-    public void deleteUserByUsernameInUserData(String username) {
-        UUID userDataId = getUserFromUserDataByUsername(username).getId();
+    public void deleteUserInUserData(UserDataEntity user) {
         try (Connection conn = userdataDs.getConnection()) {
             conn.setAutoCommit(false);
             try (
@@ -97,10 +84,10 @@ public class UserDataDAOJdbc implements UserDataDAO {
                     PreparedStatement usersPs = conn.prepareStatement(
                             "DELETE FROM users WHERE id = ?")
             ) {
-                friendsPs.setObject(1, userDataId);
-                friendsPs.setObject(2, userDataId);
+                friendsPs.setObject(1, user.getId());
+                friendsPs.setObject(2, user.getId());
                 friendsPs.executeUpdate();
-                usersPs.setObject(1, userDataId);
+                usersPs.setObject(1, user.getId());
                 usersPs.executeUpdate();
                 conn.commit();
             } catch (SQLException e) {

@@ -11,6 +11,8 @@ public interface Config {
 
     String databaseHost();
 
+    String nifflerFrontendUrl();
+
     String nifflerSpendUrl();
 
     default String databaseUser() {

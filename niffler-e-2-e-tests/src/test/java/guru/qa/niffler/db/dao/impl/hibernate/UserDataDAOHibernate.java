@@ -13,9 +13,8 @@ public class UserDataDAOHibernate extends JpaService implements UserDataDAO {
     }
 
     @Override
-    public UserDataEntity createUserInUserData(UserDataEntity user) {
+    public void createUserInUserData(UserDataEntity user) {
         persist(user);
-        return user;
     }
 
     @Override
@@ -31,8 +30,8 @@ public class UserDataDAOHibernate extends JpaService implements UserDataDAO {
     }
 
     @Override
-    public void deleteUserByUsernameInUserData(String username) {
-        UserDataEntity user = getUserFromUserDataByUsername(username);
+    public void deleteUserInUserData(UserDataEntity user) {
         remove(user);
     }
+
 }
