@@ -5,7 +5,6 @@ import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.components.PeopleTable;
 import io.qameta.allure.Step;
 
-import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
@@ -13,7 +12,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class PeoplePage extends BasePage<PeoplePage> {
 
-    private static final String PAGE_URL = config.nifflerFrontendUrl() + "people";
+    private static final String PAGE_URL = CFG.nifflerFrontendUrl() + "/people";
 
     private final SelenideElement tableContainer = $(".people-content");
     private final PeopleTable table = new PeopleTable($(".table"));

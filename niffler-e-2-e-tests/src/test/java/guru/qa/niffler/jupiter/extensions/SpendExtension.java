@@ -11,8 +11,7 @@ public class SpendExtension implements BeforeEachCallback, ParameterResolver {
 
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(SpendExtension.class);
 
-    private final SpendServiceClient spendServiceClient = new SpendServiceClient();
-
+    private SpendServiceClient spendService = new SpendServiceClient();
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
@@ -25,7 +24,7 @@ public class SpendExtension implements BeforeEachCallback, ParameterResolver {
             spend.setCategory(annotation.category());
             spend.setSpendDate(new Date());
             spend.setCurrency(annotation.currency());
-            SpendJson createdSpend = spendServiceClient.addSpend(spend);
+            SpendJson createdSpend = spendService.addSpend(spend);
             context.getStore(NAMESPACE).put(context.getUniqueId(), createdSpend);
         }
     }
@@ -43,5 +42,4 @@ public class SpendExtension implements BeforeEachCallback, ParameterResolver {
                 .getStore(SpendExtension.NAMESPACE)
                 .get(extensionContext.getUniqueId(), SpendJson.class);
     }
-
 }

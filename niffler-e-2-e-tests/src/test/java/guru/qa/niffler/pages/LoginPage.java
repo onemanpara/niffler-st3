@@ -9,7 +9,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class LoginPage extends BasePage<LoginPage> {
 
-    private static final String PAGE_URL = "http://127.0.0.1:9000/login";
+    private static final String PAGE_URL = CFG.nifflerAuthUrl() + "/login";
 
     private final SelenideElement usernameInput = $("input[name='username']");
     private final SelenideElement passwordInput = $("input[name='password']");

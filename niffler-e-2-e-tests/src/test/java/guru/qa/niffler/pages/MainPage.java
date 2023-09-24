@@ -8,7 +8,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class MainPage extends BasePage<MainPage> {
 
-    private static final String PAGE_URL = "http://127.0.0.1:3000/main";
+    private static final String PAGE_URL = CFG.nifflerFrontendUrl() + "/main";
 
     @Override
     protected String getPageUrl() {

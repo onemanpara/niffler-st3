@@ -17,7 +17,7 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
     public static ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(DBUserExtension.class);
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) {
         UserRepositoryHibernate userRepository = new UserRepositoryHibernate();
 
         List<Method> methodsList = new ArrayList<>();
@@ -39,7 +39,7 @@ public class DBUserExtension implements BeforeEachCallback, AfterTestExecutionCa
     }
 
     @Override
-    public void afterTestExecution(ExtensionContext context) throws Exception {
+    public void afterTestExecution(ExtensionContext context) {
         UserRepositoryHibernate userRepositoryHibernate = new UserRepositoryHibernate();
         Map<String, AuthUserEntity> usersFromTest = context.getStore(NAMESPACE).get(context.getUniqueId(), Map.class);
         usersFromTest.values().forEach(userRepositoryHibernate::removeUser);

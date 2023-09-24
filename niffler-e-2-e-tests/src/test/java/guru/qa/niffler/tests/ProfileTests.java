@@ -1,29 +1,19 @@
 package guru.qa.niffler.tests;
 
-import guru.qa.niffler.db.model.auth.AuthUserEntity;
+import guru.qa.niffler.jupiter.annotations.ApiLogin;
 import guru.qa.niffler.jupiter.annotations.DBUser;
-import guru.qa.niffler.jupiter.extensions.DBUserExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
-@ExtendWith(DBUserExtension.class)
 public class ProfileTests extends BaseWebTest {
 
     @BeforeEach
+    @ApiLogin
     @DBUser
-    void loginIntoAccountAndOpenProfilePage(AuthUserEntity createdUser) {
-        welcomePage
+    void openProfilePage() {
+        profilePage
                 .openPage()
-                .waitForPageIsLoaded()
-                .login()
-                .setUsername(createdUser.getUsername())
-                .setPassword(createdUser.getEncodedPassword())
-                .successSubmit()
-                .waitForPageIsLoaded()
-                .getHeader()
-                .goToProfilePage()
                 .waitForPageIsLoaded();
     }
 
