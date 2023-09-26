@@ -11,7 +11,7 @@ public class SpendServiceClient extends RestService {
     private final SpendService spendService = retrofit.create(SpendService.class);
 
     public SpendServiceClient() {
-        super(config.nifflerSpendUrl());
+        super(CFG.nifflerSpendUrl());
     }
 
     @Step("Create spend")

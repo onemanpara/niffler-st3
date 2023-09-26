@@ -11,7 +11,7 @@ public class CategoryServiceClient extends RestService {
     private final CategoryService categoryServiceClient = retrofit.create(CategoryService.class);
 
     public CategoryServiceClient() {
-        super(config.nifflerSpendUrl());
+        super(CFG.nifflerSpendUrl());
     }
 
     @Step("Create spend")

@@ -15,6 +15,8 @@ public interface Config {
 
     String nifflerSpendUrl();
 
+    String nifflerAuthUrl();
+
     default String databaseUser() {
         return "postgres";
     }

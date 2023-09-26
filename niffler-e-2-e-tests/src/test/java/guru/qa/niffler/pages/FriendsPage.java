@@ -12,7 +12,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class FriendsPage extends BasePage<FriendsPage> {
 
-    private static final String PAGE_URL = config.nifflerFrontendUrl() + "friends";
+    private static final String PAGE_URL = CFG.nifflerFrontendUrl() + "/friends";
 
     private final SelenideElement tableContainer = $(".people-content");
     private final PeopleTable table = new PeopleTable($(".table"));

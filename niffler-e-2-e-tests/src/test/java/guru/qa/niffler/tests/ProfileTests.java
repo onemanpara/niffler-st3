@@ -1,35 +1,20 @@
 package guru.qa.niffler.tests;
 
-import guru.qa.niffler.db.model.auth.AuthUserEntity;
+import guru.qa.niffler.jupiter.annotations.ApiLogin;
 import guru.qa.niffler.jupiter.annotations.DBUser;
-import guru.qa.niffler.jupiter.extensions.DBUserExtension;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
-@ExtendWith(DBUserExtension.class)
 public class ProfileTests extends BaseWebTest {
-
-    @BeforeEach
-    @DBUser
-    void loginIntoAccountAndOpenProfilePage(AuthUserEntity createdUser) {
-        welcomePage
-                .openPage()
-                .waitForPageIsLoaded()
-                .login()
-                .setUsername(createdUser.getUsername())
-                .setPassword(createdUser.getEncodedPassword())
-                .successSubmit()
-                .waitForPageIsLoaded()
-                .getHeader()
-                .goToProfilePage()
-                .waitForPageIsLoaded();
-    }
 
     @Test
     @DisplayName("WEB: Пользователь может изменить личные данные")
+    @ApiLogin
+    @DBUser
     void shouldChangeUserdataFromProfilePage() {
+        profilePage
+                .openPage()
+                .waitForPageIsLoaded();
         profilePage
                 .setFirstname("Иван")
                 .setSurname("Иванов")
@@ -48,8 +33,13 @@ public class ProfileTests extends BaseWebTest {
 
     @Test
     @DisplayName("WEB: Пользователь может загрузить аватар")
+    @ApiLogin
+    @DBUser
     void shouldUploadAvatar() {
         String filePath = "files/testimg.jpg";
+        profilePage
+                .openPage()
+                .waitForPageIsLoaded();
         profilePage
                 .uploadAvatarFromClasspath(filePath)
                 .submitData()
@@ -64,7 +54,12 @@ public class ProfileTests extends BaseWebTest {
 
     @Test
     @DisplayName("WEB: Пользователь может добавить новую категорию трат")
+    @ApiLogin
+    @DBUser
     void shouldAddNewCategoryFromProfilePage() {
+        profilePage
+                .openPage()
+                .waitForPageIsLoaded();
         profilePage
                 .setCategory("Покупки в магазине")
                 .createCategory()

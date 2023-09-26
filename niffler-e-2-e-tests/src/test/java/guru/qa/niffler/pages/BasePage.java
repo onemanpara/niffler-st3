@@ -7,7 +7,7 @@ import guru.qa.niffler.config.Config;
 
 public abstract class BasePage<T extends BasePage> {
 
-    protected static final Config config = Config.getInstance();
+    protected static final Config CFG = Config.getInstance();
 
     protected abstract String getPageUrl();
 

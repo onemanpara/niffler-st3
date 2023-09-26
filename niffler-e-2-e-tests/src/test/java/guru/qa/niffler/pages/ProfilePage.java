@@ -14,7 +14,7 @@ import static com.codeborne.selenide.Selenide.$$;
 
 public class ProfilePage extends BasePage<ProfilePage> {
 
-    private static final String PAGE_URL = config.nifflerFrontendUrl() + "profile";
+    private static final String PAGE_URL = CFG.nifflerFrontendUrl() + "/profile";
 
     private final SelenideElement editAvatarButton = $("button.profile__avatar-edit");
     private final SelenideElement uploadAvatarInput = $(".edit-avatar__input[type=file]");
