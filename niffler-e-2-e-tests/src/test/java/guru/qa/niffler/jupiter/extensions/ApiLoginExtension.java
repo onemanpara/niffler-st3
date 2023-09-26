@@ -9,17 +9,12 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.db.model.auth.AuthUserEntity;
 import guru.qa.niffler.jupiter.annotations.ApiLogin;
 import guru.qa.niffler.jupiter.annotations.DBUser;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openqa.selenium.Cookie;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecutionCallback {
@@ -28,29 +23,28 @@ public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecution
 
     @Override
     public void beforeEach(ExtensionContext extensionContext) {
-        List<Method> methodsList = new ArrayList<>();
-        methodsList.add(extensionContext.getRequiredTestMethod());
-        Arrays.stream(extensionContext.getRequiredTestClass().getDeclaredMethods())
-                .filter(method -> method.isAnnotationPresent(BeforeEach.class))
-                .forEach(methodsList::add);
+        ApiLogin loginAnnotation = extensionContext.getRequiredTestMethod().getAnnotation(ApiLogin.class);
+        if (loginAnnotation != null) {
+            String username, password;
 
-        for (Method method : methodsList) {
-            ApiLogin loginAnnotation = method.getAnnotation(ApiLogin.class);
-            if (loginAnnotation != null) {
-                DBUser userAnnotation = method.getAnnotation(DBUser.class);
+            DBUser userAnnotation = extensionContext.getRequiredTestMethod().getAnnotation(DBUser.class);
 
-                if (!loginAnnotation.username().isEmpty() && !loginAnnotation.password().isEmpty()) {
-                    doLogin(loginAnnotation.username(), loginAnnotation.password());
-                } else if (userAnnotation != null) {
-                    Map<String, AuthUserEntity> users = extensionContext
-                            .getStore(DBUserExtension.NAMESPACE)
-                            .get(extensionContext.getUniqueId(), Map.class);
-                    AuthUserEntity user = users.get(method.getName());
-                    doLogin(user.getUsername(), user.getEncodedPassword());
-                } else throw new IllegalArgumentException("Can't find the login data.");
-            }
+            if (userAnnotation != null) {
+                Map<String, AuthUserEntity> users = extensionContext
+                        .getStore(DBUserExtension.NAMESPACE)
+                        .get(extensionContext.getUniqueId(), Map.class);
+                AuthUserEntity user = users.get(extensionContext.getRequiredTestMethod().getName());
+                username = user.getUsername();
+                password = user.getEncodedPassword();
+            } else if (!loginAnnotation.username().isEmpty() && !loginAnnotation.password().isEmpty()) {
+                username = loginAnnotation.username();
+                password = loginAnnotation.password();
+            } else throw new IllegalArgumentException("Can't find the login data.");
+
+            doLogin(username, password);
         }
     }
+
 
     private void doLogin(String username, String password) {
         SessionStorageContext sessionStorageContext = SessionStorageContext.getInstance();
