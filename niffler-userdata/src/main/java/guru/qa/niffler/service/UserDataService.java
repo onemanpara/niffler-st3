@@ -19,12 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 public class UserDataService {
@@ -203,11 +198,12 @@ public class UserDataService {
                 .toList();
     }
 
-    private @Nonnull UserEntity getRequiredUser(@Nonnull String username) {
+    @Nonnull UserEntity getRequiredUser(@Nonnull String username) {
         UserEntity user = userRepository.findByUsername(username);
         if (user == null) {
             throw new NotFoundException("Can`t find user by username: " + username);
         }
         return user;
     }
+
 }
