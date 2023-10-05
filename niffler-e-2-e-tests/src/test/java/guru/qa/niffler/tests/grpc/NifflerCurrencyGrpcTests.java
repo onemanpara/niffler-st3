@@ -53,7 +53,7 @@ public class NifflerCurrencyGrpcTests extends BaseGrpcTest {
 
     @MethodSource
     @ParameterizedTest(name = "При конвертации {0} {1} в валюту {2} результат равен {3} {2}")
-    @Story("Конвертация трат из основной валюту")
+    @Story("Конвертация трат из основной валюты")
     void shouldCalculateRateFromMainCurrency(double amount, CurrencyValues spendCurrency, CurrencyValues desiredCurrency, double expectedResult) {
         CalculateRequest request = CalculateRequest.newBuilder()
                 .setAmount(amount)
