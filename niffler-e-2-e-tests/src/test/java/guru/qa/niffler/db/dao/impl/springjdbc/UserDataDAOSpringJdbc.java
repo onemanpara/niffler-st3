@@ -34,7 +34,7 @@ public class UserDataDAOSpringJdbc implements UserDataDAO {
         KeyHolder kh = new GeneratedKeyHolder();
         userdataJdbcTemplate.update(connection -> {
             PreparedStatement usersPs = connection.prepareStatement(
-                    "INSERT INTO users (username, currency) " +
+                    "INSERT INTO \"users\" (username, currency) " +
                             "VALUES (?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
             usersPs.setString(1, user.getUsername());
             usersPs.setString(2, user.getCurrency().name());
@@ -52,7 +52,7 @@ public class UserDataDAOSpringJdbc implements UserDataDAO {
         UserDataEntity user;
         try {
             user = userdataJdbcTemplate.queryForObject(
-                    "SELECT * FROM users WHERE username = ?",
+                    "SELECT * FROM \"users\" WHERE username = ?",
                     UserDataEntityRowMapper.instance,
                     username
             );
@@ -64,7 +64,7 @@ public class UserDataDAOSpringJdbc implements UserDataDAO {
 
     @Override
     public void updateUserInUserData(UserDataEntity user) {
-        userdataJdbcTemplate.update("UPDATE users SET " +
+        userdataJdbcTemplate.update("UPDATE \"users\" SET " +
                         "currency = ?, " +
                         "firstname = ?, " +
                         "surname = ?, " +
@@ -80,8 +80,8 @@ public class UserDataDAOSpringJdbc implements UserDataDAO {
     @Override
     public void deleteUserInUserData(UserDataEntity user) {
         userdataTtpl.executeWithoutResult(status -> {
-            userdataJdbcTemplate.update("DELETE FROM friends WHERE user_id = ? OR friend_id = ?", user.getId(), user.getId());
-            userdataJdbcTemplate.update("DELETE FROM users WHERE id = ?", user.getId());
+            userdataJdbcTemplate.update("DELETE FROM friendship WHERE user_id = ? OR friend_id = ?", user.getId(), user.getId());
+            userdataJdbcTemplate.update("DELETE FROM \"users\" WHERE id = ?", user.getId());
         });
     }
 }

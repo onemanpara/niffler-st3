@@ -40,7 +40,7 @@ public class AuthUserDAOSpringJdbc implements AuthUserDAO {
             KeyHolder kh = new GeneratedKeyHolder();
 
             authJdbcTemplate.update(con -> {
-                PreparedStatement ps = con.prepareStatement("INSERT INTO users " +
+                PreparedStatement ps = con.prepareStatement("INSERT INTO \"users\" " +
                                 "(username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired) " +
                                 "VALUES (?, ?, ?, ?, ?, ?)",
                         Statement.RETURN_GENERATED_KEYS);
@@ -53,7 +53,7 @@ public class AuthUserDAOSpringJdbc implements AuthUserDAO {
                 return ps;
             }, kh);
             final UUID generatedUserId = (UUID) kh.getKeyList().get(0).get("id");
-            authJdbcTemplate.batchUpdate("INSERT INTO authorities (user_id, authority) VALUES (?, ?)", new BatchPreparedStatementSetter() {
+            authJdbcTemplate.batchUpdate("INSERT INTO authority (user_id, authority) VALUES (?, ?)", new BatchPreparedStatementSetter() {
                 @Override
                 public void setValues(PreparedStatement ps, int i) throws SQLException {
                     ps.setObject(1, generatedUserId);
@@ -75,12 +75,12 @@ public class AuthUserDAOSpringJdbc implements AuthUserDAO {
         AuthUserEntity user;
         try {
             user = authJdbcTemplate.queryForObject(
-                    "SELECT * FROM users WHERE id = ? ",
+                    "SELECT * FROM \"users\" WHERE id = ? ",
                     UserEntityRowMapper.instance,
                     userId
             );
             List<AuthorityEntity> authorities = authJdbcTemplate.query(
-                    "SELECT * FROM authorities WHERE user_id = ?", AuthorityEntityRowMapper.instance, userId
+                    "SELECT * FROM authority WHERE user_id = ?", AuthorityEntityRowMapper.instance, userId
             );
             user.setAuthorities(authorities);
             return user;
@@ -91,7 +91,7 @@ public class AuthUserDAOSpringJdbc implements AuthUserDAO {
 
     @Override
     public AuthUserEntity updateUser(AuthUserEntity user) {
-        authJdbcTemplate.update("UPDATE users " +
+        authJdbcTemplate.update("UPDATE \"users\" " +
                         "SET password = ?, " +
                         "enabled = ?, " +
                         "account_non_expired = ?, " +
@@ -110,8 +110,8 @@ public class AuthUserDAOSpringJdbc implements AuthUserDAO {
     @Override
     public void deleteUser(AuthUserEntity user) {
         authTtpl.executeWithoutResult(status -> {
-            authJdbcTemplate.update("DELETE FROM authorities WHERE user_id = ?", user.getId());
-            authJdbcTemplate.update("DELETE FROM users WHERE id = ?", user.getId());
+            authJdbcTemplate.update("DELETE FROM authority WHERE user_id = ?", user.getId());
+            authJdbcTemplate.update("DELETE FROM \"users\" WHERE id = ?", user.getId());
         });
     }
 }
