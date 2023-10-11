@@ -28,4 +28,9 @@ public interface Config {
     default int databasePort() {
         return 5432;
     }
+
+    String currencyGrpcAddress();
+
+    int currencyGrpcPort();
+
 }

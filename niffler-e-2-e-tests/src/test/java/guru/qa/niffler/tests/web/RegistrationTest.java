@@ -1,4 +1,4 @@
-package guru.qa.niffler.tests;
+package guru.qa.niffler.tests.web;
 
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
