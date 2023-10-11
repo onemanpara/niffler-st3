@@ -6,16 +6,17 @@ import guru.qa.niffler.api.auth.AuthServiceClient;
 import guru.qa.niffler.api.context.CookieContext;
 import guru.qa.niffler.api.context.SessionStorageContext;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.db.model.auth.AuthUserEntity;
 import guru.qa.niffler.jupiter.annotations.ApiLogin;
-import guru.qa.niffler.jupiter.annotations.DBUser;
+import guru.qa.niffler.jupiter.annotations.GenerateUser;
+import guru.qa.niffler.models.UserJson;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.openqa.selenium.Cookie;
 
 import java.io.IOException;
-import java.util.Map;
+
+import static guru.qa.niffler.jupiter.extensions.CreateUserExtension.NESTED;
 
 public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecutionCallback {
 
@@ -26,16 +27,15 @@ public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecution
         ApiLogin loginAnnotation = extensionContext.getRequiredTestMethod().getAnnotation(ApiLogin.class);
         if (loginAnnotation != null) {
             String username, password;
+            GenerateUser user = loginAnnotation.user();
 
-            DBUser userAnnotation = extensionContext.getRequiredTestMethod().getAnnotation(DBUser.class);
-
-            if (userAnnotation != null) {
-                Map<String, AuthUserEntity> users = extensionContext
-                        .getStore(DBUserExtension.NAMESPACE)
-                        .get(extensionContext.getUniqueId(), Map.class);
-                AuthUserEntity user = users.get(extensionContext.getRequiredTestMethod().getName());
-                username = user.getUsername();
-                password = user.getEncodedPassword();
+            if (user.handleAnnotation()) {
+                UserJson createdUser = extensionContext.getStore(NESTED).get(
+                        extensionContext.getUniqueId(),
+                        UserJson.class
+                );
+                username = createdUser.getUsername();
+                password = createdUser.getPassword();
             } else if (!loginAnnotation.username().isEmpty() && !loginAnnotation.password().isEmpty()) {
                 username = loginAnnotation.username();
                 password = loginAnnotation.password();
@@ -45,10 +45,9 @@ public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecution
         }
     }
 
-
     private void doLogin(String username, String password) {
         SessionStorageContext sessionStorageContext = SessionStorageContext.getInstance();
-        sessionStorageContext.init();
+        CookieContext cookieContext = CookieContext.getInstance();
 
         try {
             authServiceClient.doLogin(username, password);
@@ -60,7 +59,7 @@ public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecution
         Selenide.sessionStorage().setItem("codeChallenge", sessionStorageContext.getCodeChallenge());
         Selenide.sessionStorage().setItem("id_token", sessionStorageContext.getToken());
         Selenide.sessionStorage().setItem("codeVerifier", sessionStorageContext.getCodeVerifier());
-        Cookie jsessionIdCookie = new Cookie("JSESSIONID", CookieContext.getInstance().getJSessionIdCookieValue());
+        Cookie jsessionIdCookie = new Cookie("JSESSIONID", cookieContext.getJSessionIdCookieValue());
         WebDriverRunner.getWebDriver().manage().addCookie(jsessionIdCookie);
     }
 
@@ -69,4 +68,5 @@ public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecution
         SessionStorageContext.getInstance().clearContext();
         CookieContext.getInstance().clearContext();
     }
+
 }

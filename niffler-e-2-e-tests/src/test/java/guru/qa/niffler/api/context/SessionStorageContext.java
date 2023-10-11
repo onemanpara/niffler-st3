@@ -21,13 +21,17 @@ public class SessionStorageContext {
         return INSTANCE.get();
     }
 
-    public void init() {
-        final String codeVerifier = OauthUtils.generateCodeVerifier();
-        setCodeChallenge(OauthUtils.generateCodeChallenge(codeVerifier));
-        setCodeVerifier(codeVerifier);
+    public SessionStorageContext init() {
+        clearContext();
+        return getInstance();
     }
 
     public String getCodeChallenge() {
+        if (store.get(CODE_CHALLENGE_KEY) == null) {
+            final String codeVerifier = OauthUtils.generateCodeVerifier();
+            setCodeChallenge(OauthUtils.generateCodeChallenge(codeVerifier));
+            setCodeVerifier(codeVerifier);
+        }
         return store.get(CODE_CHALLENGE_KEY);
     }
 

@@ -6,12 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface ApiLogin {
-    String username() default "";
+@Target(ElementType.PARAMETER)
+public @interface GeneratedUser {
 
-    String password() default "";
+    Selector selector() default Selector.NESTED;
 
-    GenerateUser user() default @GenerateUser(handleAnnotation = false);
-
+    enum Selector {
+        NESTED, OUTER
+    }
 }

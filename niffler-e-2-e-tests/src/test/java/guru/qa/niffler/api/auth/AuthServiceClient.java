@@ -27,8 +27,8 @@ public class AuthServiceClient extends RestService {
 
     @Step("Do api login")
     public void doLogin(String username, String password) throws IOException {
-        SessionStorageContext sessionStorageContext = SessionStorageContext.getInstance();
-        CookieContext cookieContext = CookieContext.getInstance();
+        SessionStorageContext sessionStorageContext = SessionStorageContext.getInstance().init();
+        CookieContext cookieContext = CookieContext.getInstance().init();
         authService.authorize(
                 "code",
                 "client",

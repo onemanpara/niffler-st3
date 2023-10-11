@@ -17,6 +17,11 @@ public class CookieContext {
         return INSTANCE.get();
     }
 
+    public CookieContext init() {
+        clearContext();
+        return getInstance();
+    }
+
     public void setJsessionid(String cookie) {
         store.put(JSESSIONID_KEY, cookie);
     }
