@@ -50,4 +50,10 @@ public class PeoplePage extends BasePage<PeoplePage> {
         return this;
     }
 
+    @Step("Check that people list contains sent friend invitation to user: {username}")
+    public PeoplePage checkInvitationToFriendSent(String username) {
+        table.getAllRows().filter(text("Pending invitation")).find(text(username)).shouldBe(visible);
+        return this;
+    }
+
 }

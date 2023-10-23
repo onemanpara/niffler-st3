@@ -5,12 +5,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DBUser {
+@Target(ElementType.FIELD)
+public @interface Friend {
 
-    String username() default "";
+    boolean handleAnnotation() default true;
 
-    String password() default "";
-
+    int count() default 1;
 }

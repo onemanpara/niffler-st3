@@ -1,7 +1,7 @@
 package guru.qa.niffler.tests.web;
 
 import guru.qa.niffler.jupiter.annotations.ApiLogin;
-import guru.qa.niffler.jupiter.annotations.DBUser;
+import guru.qa.niffler.jupiter.annotations.GenerateUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -9,12 +9,12 @@ public class ProfileTests extends BaseWebTest {
 
     @Test
     @DisplayName("WEB: Пользователь может изменить личные данные")
-    @ApiLogin
-    @DBUser
+    @ApiLogin(user = @GenerateUser)
     void shouldChangeUserdataFromProfilePage() {
         profilePage
                 .openPage()
                 .waitForPageIsLoaded();
+
         profilePage
                 .setFirstname("Иван")
                 .setSurname("Иванов")
@@ -33,8 +33,7 @@ public class ProfileTests extends BaseWebTest {
 
     @Test
     @DisplayName("WEB: Пользователь может загрузить аватар")
-    @ApiLogin
-    @DBUser
+    @ApiLogin(user = @GenerateUser)
     void shouldUploadAvatar() {
         String filePath = "files/testimg.jpg";
         profilePage
@@ -54,8 +53,7 @@ public class ProfileTests extends BaseWebTest {
 
     @Test
     @DisplayName("WEB: Пользователь может добавить новую категорию трат")
-    @ApiLogin
-    @DBUser
+    @ApiLogin(user = @GenerateUser)
     void shouldAddNewCategoryFromProfilePage() {
         profilePage
                 .openPage()

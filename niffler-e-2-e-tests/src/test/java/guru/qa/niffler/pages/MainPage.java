@@ -1,5 +1,6 @@
 package guru.qa.niffler.pages;
 
+import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.components.Header;
 import io.qameta.allure.Step;
 
@@ -20,6 +21,12 @@ public class MainPage extends BasePage<MainPage> {
     public MainPage waitForPageIsLoaded() {
         super.waitForPageIsLoaded();
         $("section.main-content__section-stats").shouldBe(visible);
+        return this;
+    }
+
+    @Step("Open main page")
+    public MainPage openPage() {
+        Selenide.open(getPageUrl());
         return this;
     }
 

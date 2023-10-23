@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 @Entity
-@Table(name = "users")
+@Table(name = "\"user\"")
 public class UserDataEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

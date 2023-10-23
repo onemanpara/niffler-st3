@@ -3,7 +3,7 @@ package guru.qa.niffler.data;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "friends")
+@Table(name = "friendship")
 @IdClass(FriendsId.class)
 public class FriendsEntity {
 
@@ -43,5 +43,4 @@ public class FriendsEntity {
     public void setPending(boolean pending) {
         this.pending = pending;
     }
-
 }

@@ -21,7 +21,7 @@ public class UserDataDAOJdbc implements UserDataDAO {
     public void createUserInUserData(UserDataEntity user) {
         try (Connection conn = userdataDs.getConnection()) {
             PreparedStatement usersPs = conn.prepareStatement(
-                    "INSERT INTO users (username, currency) " +
+                    "INSERT INTO \"users\" (username, currency) " +
                             "VALUES (?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
             usersPs.setString(1, user.getUsername());
             usersPs.setString(2, user.getCurrency().name());
@@ -34,7 +34,7 @@ public class UserDataDAOJdbc implements UserDataDAO {
     @Override
     public UserDataEntity getUserFromUserDataByUsername(String username) {
         try (Connection conn = userdataDs.getConnection();
-             PreparedStatement userdataPs = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+             PreparedStatement userdataPs = conn.prepareStatement("SELECT * FROM \"users\" WHERE username = ?")) {
             userdataPs.setObject(1, username);
             ResultSet resultSet = userdataPs.executeQuery();
 
@@ -58,7 +58,7 @@ public class UserDataDAOJdbc implements UserDataDAO {
     @Override
     public void updateUserInUserData(UserDataEntity user) {
         try (Connection conn = userdataDs.getConnection()) {
-            PreparedStatement userdataPs = conn.prepareStatement("UPDATE users SET currency = ?, firstname = ?, " +
+            PreparedStatement userdataPs = conn.prepareStatement("UPDATE \"users\" SET currency = ?, firstname = ?, " +
                     "surname = ?, photo = ? WHERE id = ?");
             userdataPs.setString(1, user.getCurrency().name());
             userdataPs.setString(2, user.getFirstname());
@@ -80,9 +80,9 @@ public class UserDataDAOJdbc implements UserDataDAO {
             conn.setAutoCommit(false);
             try (
                     PreparedStatement friendsPs = conn.prepareStatement(
-                            "DELETE FROM friends WHERE user_id = ? OR friend_id = ?");
+                            "DELETE FROM friendship WHERE user_id = ? OR friend_id = ?");
                     PreparedStatement usersPs = conn.prepareStatement(
-                            "DELETE FROM users WHERE id = ?")
+                            "DELETE FROM \"users\" WHERE id = ?")
             ) {
                 friendsPs.setObject(1, user.getId());
                 friendsPs.setObject(2, user.getId());

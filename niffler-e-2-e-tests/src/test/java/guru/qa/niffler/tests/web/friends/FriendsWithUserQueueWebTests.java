@@ -1,14 +1,15 @@
-package guru.qa.niffler.tests.web;
+package guru.qa.niffler.tests.web.friends;
 
 
 import guru.qa.niffler.jupiter.annotations.User;
 import guru.qa.niffler.models.UserJson;
+import guru.qa.niffler.tests.web.BaseWebTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static guru.qa.niffler.jupiter.annotations.User.UserType.*;
 
-public class FriendsWebTests extends BaseWebTest {
+public class FriendsWithUserQueueWebTests extends BaseWebTest {
 
     @Test
     @DisplayName("WEB: Друзья пользователя отображаются в таблице на странице друзей")
