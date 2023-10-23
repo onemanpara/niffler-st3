@@ -14,6 +14,7 @@ public class ProfileTests extends BaseWebTest {
         profilePage
                 .openPage()
                 .waitForPageIsLoaded();
+
         profilePage
                 .setFirstname("Иван")
                 .setSurname("Иванов")

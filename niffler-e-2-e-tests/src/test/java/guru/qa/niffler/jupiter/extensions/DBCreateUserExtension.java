@@ -10,8 +10,8 @@ import guru.qa.niffler.db.repository.UserRepository;
 import guru.qa.niffler.db.repository.UserRepositoryHibernate;
 import guru.qa.niffler.jupiter.annotations.GenerateUser;
 import guru.qa.niffler.models.UserJson;
+import guru.qa.niffler.util.DataUtils;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,7 +37,7 @@ public class DBCreateUserExtension extends CreateUserExtension {
             UserDataDAOHibernate userDataDAOHibernate = new UserDataDAOHibernate();
 
             for (int i = 0; i < annotation.friends().count(); i++) {
-                AuthUserEntity friendAuthData = fillAuthUserEntity(null, null);
+                AuthUserEntity friendAuthData = fillAuthUserEntityRandomData();
                 userRepository.createUserForTest(friendAuthData);
                 UserDataEntity friendUserData = userDataDAOHibernate.getUserFromUserDataByUsername(friendAuthData.getUsername());
 
@@ -57,7 +57,7 @@ public class DBCreateUserExtension extends CreateUserExtension {
             UserDataDAOHibernate userDataDAOHibernate = new UserDataDAOHibernate();
 
             for (int i = 0; i < annotation.incomeInvitations().count(); i++) {
-                AuthUserEntity friendAuthData = fillAuthUserEntity(null, null);
+                AuthUserEntity friendAuthData = fillAuthUserEntityRandomData();
                 userRepository.createUserForTest(friendAuthData);
                 UserDataEntity friendUserData = userDataDAOHibernate.getUserFromUserDataByUsername(friendAuthData.getUsername());
 
@@ -77,7 +77,7 @@ public class DBCreateUserExtension extends CreateUserExtension {
             UserDataDAOHibernate userDataDAOHibernate = new UserDataDAOHibernate();
 
             for (int i = 0; i < annotation.outcomeInvitations().count(); i++) {
-                AuthUserEntity friendAuthData = fillAuthUserEntity(null, null);
+                AuthUserEntity friendAuthData = fillAuthUserEntityRandomData();
                 userRepository.createUserForTest(friendAuthData);
                 UserDataEntity friendUserData = userDataDAOHibernate.getUserFromUserDataByUsername(friendAuthData.getUsername());
 
@@ -89,16 +89,12 @@ public class DBCreateUserExtension extends CreateUserExtension {
         } else return Collections.emptyList();
     }
 
-    private AuthUserEntity fillAuthUserEntity(@Nullable String desiredUsername, @Nullable String desiredPassword) {
-        Faker faker = new Faker();
+    private AuthUserEntity fillAuthUserEntity(String desiredUsername, String desiredPassword) {
         AuthUserEntity user = new AuthUserEntity();
 
-        final String username = desiredUsername == null ? faker.name().username() : desiredUsername;
-        final String password = desiredPassword == null ? faker.internet().password(3, 12) : desiredPassword;
-
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setEncodedPassword(password);
+        user.setUsername(desiredUsername);
+        user.setPassword(desiredPassword);
+        user.setEncodedPassword(desiredPassword);
         user.setEnabled(true);
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
@@ -112,4 +108,25 @@ public class DBCreateUserExtension extends CreateUserExtension {
                 }).toList()));
         return user;
     }
+
+    private AuthUserEntity fillAuthUserEntityRandomData() {
+        AuthUserEntity user = new AuthUserEntity();
+
+        user.setUsername(DataUtils.getRandomUsername());
+        user.setPassword(DataUtils.getRandomPassword());
+        user.setEncodedPassword(DataUtils.getRandomPassword());
+        user.setEnabled(true);
+        user.setAccountNonExpired(true);
+        user.setAccountNonLocked(true);
+        user.setCredentialsNonExpired(true);
+        user.setAuthorities(new ArrayList<>(Arrays.stream(Authority.values())
+                .map(a -> {
+                    AuthorityEntity ae = new AuthorityEntity();
+                    ae.setAuthority(a);
+                    ae.setUser(user);
+                    return ae;
+                }).toList()));
+        return user;
+    }
+
 }

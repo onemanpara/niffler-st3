@@ -8,8 +8,8 @@ import guru.qa.niffler.api.friend.FriendServiceClient;
 import guru.qa.niffler.api.register.RegisterServiceClient;
 import guru.qa.niffler.jupiter.annotations.GenerateUser;
 import guru.qa.niffler.models.UserJson;
+import guru.qa.niffler.util.DataUtils;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +36,7 @@ public class RestCreateUserExtension extends CreateUserExtension {
         if (annotation.friends().handleAnnotation()) {
             List<UserJson> friendsList = new ArrayList<>();
             for (int i = 0; i < annotation.friends().count(); i++) {
-                UserJson friend = createUserJson(null, null);
+                UserJson friend = createRandomUserJson();
                 registerService.registerUser(friend.getUsername(), friend.getPassword());
                 addInvitation(currentUser.getUsername(), friend);
                 acceptInvitation(currentUser, friend.getUsername());
@@ -51,7 +51,7 @@ public class RestCreateUserExtension extends CreateUserExtension {
         if (annotation.incomeInvitations().handleAnnotation()) {
             List<UserJson> friendsList = new ArrayList<>();
             for (int i = 0; i < annotation.incomeInvitations().count(); i++) {
-                UserJson friend = createUserJson(null, null);
+                UserJson friend = createRandomUserJson();
                 registerService.registerUser(friend.getUsername(), friend.getPassword());
                 addInvitation(currentUser.getUsername(), friend);
                 friendsList.add(friend);
@@ -65,7 +65,7 @@ public class RestCreateUserExtension extends CreateUserExtension {
         if (annotation.outcomeInvitations().handleAnnotation()) {
             List<UserJson> friendsList = new ArrayList<>();
             for (int i = 0; i < annotation.outcomeInvitations().count(); i++) {
-                UserJson friend = createUserJson(null, null);
+                UserJson friend = createRandomUserJson();
                 registerService.registerUser(friend.getUsername(), friend.getPassword());
                 addInvitation(friend.getUsername(), currentUser);
                 friendsList.add(friend);
@@ -74,14 +74,15 @@ public class RestCreateUserExtension extends CreateUserExtension {
         } else return Collections.emptyList();
     }
 
-    private UserJson createUserJson(@Nullable String desiredUsername, @Nullable String desiredPassword) {
-        Faker faker = new Faker();
-        final String username = desiredUsername == null ? faker.name().username() : desiredUsername;
-        final String password = desiredPassword == null ? faker.internet().password(3, 12) : desiredPassword;
+    private UserJson createUserJson(String desiredUsername, String desiredPassword) {
         UserJson user = new UserJson();
-        user.setUsername(username);
-        user.setPassword(password);
+        user.setUsername(desiredUsername);
+        user.setPassword(desiredPassword);
         return user;
+    }
+
+    private UserJson createRandomUserJson() {
+        return createUserJson(DataUtils.getRandomUsername(), DataUtils.getRandomPassword());
     }
 
     private void addInvitation(String userWhoReceivedInvitation, UserJson userWhoSentInvitation) throws IOException {
